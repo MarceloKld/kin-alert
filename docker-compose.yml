@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: kin_alert_app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+    networks:
+      - kin_alert_network
+
+  nginx:
+    image: nginx:alpine
+    container_name: kin_alert_nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx:/etc/nginx/conf.d
+    networks:
+      - kin_alert_network
+
+  db:
+    image: mysql:8
+    container_name: kin_alert_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: kin_alert
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: secret
+      MYSQL_USER: laravel
+    ports:
+      - "3307:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - kin_alert_network
+
+  redis:
+    image: redis:alpine
+    container_name: kin_alert_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - kin_alert_network
+
+networks:
+  kin_alert_network:
+
+volumes:
+  dbdata:
