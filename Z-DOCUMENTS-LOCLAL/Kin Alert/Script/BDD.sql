@@ -2,7 +2,7 @@ CREATE DATABASE kin_alert CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE kin_alert;
 
 
---✅ TABLE 1 : utilisateurs
+-- utilisateurs
 CREATE TABLE utilisateurs (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(150) NOT NULL,
@@ -14,13 +14,14 @@ CREATE TABLE utilisateurs (
     date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
---villes
+
+-- villes
 CREATE TABLE villes (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL
 );
 
---communes
+-- communes
 CREATE TABLE communes (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
@@ -28,14 +29,14 @@ CREATE TABLE communes (
     FOREIGN KEY (ville_id) REFERENCES villes(id) ON DELETE CASCADE
 );
 
---types_incidents
+-- types_incidents
 CREATE TABLE types_incidents (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     titre VARCHAR(100) NOT NULL,
     description TEXT
 );
 
---incidents
+-- incidents
 CREATE TABLE incidents (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     titre VARCHAR(150) NOT NULL,
@@ -55,11 +56,11 @@ CREATE TABLE incidents (
     FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id)
 );
 
---confirmations
+-- confirmations
 CREATE TABLE confirmations (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    utilisateur_id BIGINT,
-    incident_id BIGINT,
+    utilisateur_id BIGINT NOT NULL,
+    incident_id BIGINT NOT NULL,
     date_confirmation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     UNIQUE(utilisateur_id, incident_id),
@@ -68,19 +69,8 @@ CREATE TABLE confirmations (
     FOREIGN KEY (incident_id) REFERENCES incidents(id) ON DELETE CASCADE
 );
 
---commentaires
-CREATE TABLE commentaires (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    contenu TEXT NOT NULL,
-    utilisateur_id BIGINT,
-    incident_id BIGINT,
-    date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id) ON DELETE CASCADE,
-    FOREIGN KEY (incident_id) REFERENCES incidents(id) ON DELETE CASCADE
-);
-
---notifications
+-- notifications
 CREATE TABLE notifications (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     utilisateur_id BIGINT,
@@ -91,7 +81,7 @@ CREATE TABLE notifications (
     FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id) ON DELETE CASCADE
 );
 
---Upload de preuves
+-- Upload de preuves
 CREATE TABLE preuves (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     incident_id BIGINT,
@@ -100,7 +90,7 @@ CREATE TABLE preuves (
     FOREIGN KEY (incident_id) REFERENCES incidents(id) ON DELETE CASCADE
 );
 
---Historique des statuts
+-- Historique des statuts
 CREATE TABLE historique_statuts (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     incident_id BIGINT,
@@ -110,6 +100,34 @@ CREATE TABLE historique_statuts (
     date_modification TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+
+-- commentaires
+CREATE TABLE commentaires (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    contenu TEXT NOT NULL,
+    utilisateur_id BIGINT NOT NULL,
+    incident_id BIGINT NOT NULL,
+    date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    -- Clés étrangères avec suppression en cascade
+    FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id) ON DELETE CASCADE,
+    FOREIGN KEY (incident_id) REFERENCES incidents(id) ON DELETE CASCADE
+);
+
+
+-- PERSONNALISATION
+
+--Ajout relation
 ALTER TABLE historique_statuts
     ADD CONSTRAINT fk_historique_incident FOREIGN KEY (incident_id) REFERENCES incidents(id) ON DELETE CASCADE,
     ADD CONSTRAINT fk_historique_utilisateur FOREIGN KEY (modifie_par) REFERENCES utilisateurs(id) ON DELETE SET NULL;
+
+
+-- Ajouter des INDEXS pour performance SaaS
+CREATE INDEX idx_incidents_statut ON incidents(statut);
+CREATE INDEX idx_incidents_commune ON incidents(commune_id);
+CREATE INDEX idx_incidents_type ON incidents(type_incident_id);
+CREATE INDEX idx_incidents_date ON incidents(date_creation);
+-- Index pour optimiser le chargement de l'espace de discussion sous un incident
+CREATE INDEX idx_commentaires_incident ON commentaires(incident_id);
+-- Pourquoi ? Filtrage rapide, Dashboard performant, Pagination optimisée, Prêt pour gros volume.
