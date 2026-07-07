@@ -123,11 +123,11 @@ ALTER TABLE historique_statuts
     ADD CONSTRAINT fk_historique_utilisateur FOREIGN KEY (modifie_par) REFERENCES utilisateurs(id) ON DELETE SET NULL;
 
 
--- Ajouter des INDEXS pour performance SaaS
+-- ✅ Ajouter des INDEXS pour performance SaaS (Syntaxe corrigée)
+-- ✅ Index adaptés à ta structure de base de données actuelle
 CREATE INDEX idx_incidents_statut ON incidents(statut);
 CREATE INDEX idx_incidents_commune ON incidents(commune_id);
 CREATE INDEX idx_incidents_type ON incidents(type_incident_id);
 CREATE INDEX idx_incidents_date ON incidents(date_creation);
--- Index pour optimiser le chargement de l'espace de discussion sous un incident
 CREATE INDEX idx_commentaires_incident ON commentaires(incident_id);
 -- Pourquoi ? Filtrage rapide, Dashboard performant, Pagination optimisée, Prêt pour gros volume.
