@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Http\Resources\IncidentResource;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Http\Requests\UpdateIncidentRequest;
 use App\Http\Controllers\Controller;
@@ -31,7 +32,7 @@ class IncidentController extends Controller
         ->latest('date_creation')
         ->paginate(10);
 
-    return response()->json($incidents);
+    return IncidentResource::collection($incidents);
 }
 
     /**
@@ -49,10 +50,12 @@ public function store(StoreIncidentRequest $request, IncidentService $service)
         auth()->id()
     );
 
-    return response()->json([
-        'message' => 'Incident créé avec succès',
-        'data' => $incident
-    ], 201);
+   return response()->json([
+    'message' => 'Incident créé avec succès',
+    'data' => new IncidentResource(
+        $incident->load(['utilisateur', 'commune', 'type'])
+    )
+], 201);
 }
 
     /**
@@ -62,7 +65,9 @@ public function store(StoreIncidentRequest $request, IncidentService $service)
 {
     $this->authorize('view', $incident);
 
-    return response()->json($incident);
+    $incident->load(['utilisateur', 'commune', 'type']);
+
+    return new IncidentResource($incident);
 }
 
 public function update(UpdateIncidentRequest $request, Incident $incident)
@@ -73,9 +78,11 @@ public function update(UpdateIncidentRequest $request, Incident $incident)
     $incident->update($request->validated());
 
     return response()->json([
-        'message' => 'Incident mis à jour',
-        'data' => $incident
-    ]);
+    'message' => 'Incident mis à jour',
+    'data' => new IncidentResource(
+        $incident->load(['utilisateur', 'commune', 'type'])
+    )
+]);
 }
 
 public function destroy(Incident $incident)
