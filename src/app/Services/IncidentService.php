@@ -12,12 +12,14 @@ class IncidentService
     {
         return DB::transaction(function () use ($data, $userId) {
 
-            $incident = Incident::create([
-                ...$data,
-                'utilisateur_id' => $userId,
-                'statut' => 'en_attente',
-                'nombre_confirmations' => 0
-            ]);
+            $incident = Incident::create(array_merge(
+    $data,
+    [
+        'utilisateur_id' => $userId,
+        'statut' => 'en_attente',
+        'nombre_confirmations' => 0
+    ]
+));
 
             HistoriqueStatut::create([
                 'incident_id' => $incident->id,
