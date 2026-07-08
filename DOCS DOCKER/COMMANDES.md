@@ -29,8 +29,12 @@ R/docker ps
 R/docker compose down -v
 docker compose up --build
 
-#5.Lancer les tests
+\#5.Lancer les tests
 R/php artisan test
+
+\#6.HASH DES MOTS DE PASSE
+R/php artisan tinker
+bcrypt('password123');
 
 
 

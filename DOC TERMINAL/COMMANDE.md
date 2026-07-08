@@ -1,0 +1,5 @@
+\#1.QUITER
+R/exit
+
+\#2.QUITTER DANS LINUX(END)
+R/q
