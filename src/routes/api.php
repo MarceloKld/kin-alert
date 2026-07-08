@@ -20,6 +20,8 @@ Route::prefix('v1')->group(function () {
 
         Route::post('logout', [AuthController::class, 'logout']);
         Route::get('me', [AuthController::class, 'me']);
+        Route::post('incidents/{incident}/confirm', 
+    [IncidentController::class, 'confirm']);
 
        Route::apiResource('incidents', IncidentController::class)
     ->only(['index', 'store', 'show', 'update', 'destroy']);

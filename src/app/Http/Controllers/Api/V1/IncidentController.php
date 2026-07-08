@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Services\ConfirmationService;
 use App\Http\Resources\IncidentResource;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Http\Requests\UpdateIncidentRequest;
@@ -94,6 +95,18 @@ public function destroy(Incident $incident)
 
     return response()->json([
         'message' => 'Incident supprimé'
+    ]);
+}
+
+public function confirm(Incident $incident, ConfirmationService $service)
+{
+    $incident = $service->confirmer($incident, auth()->id());
+
+    return response()->json([
+        'message' => 'Confirmation enregistrée',
+        'data' => new IncidentResource(
+            $incident->load(['utilisateur', 'commune', 'type'])
+        )
     ]);
 }
 
