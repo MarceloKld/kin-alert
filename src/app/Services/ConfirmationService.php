@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\IncidentValidated;
 use App\Models\Incident;
 use App\Models\Confirmation;
 use App\Models\HistoriqueStatut;
@@ -57,6 +58,8 @@ class ConfirmationService
                     'nouveau_statut' => 'valide',
                     'modifie_par' => $userId
                 ]);
+
+                event(new IncidentValidated($incident));
             }
 
             return $incident->fresh();
