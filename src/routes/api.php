@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\IncidentController;
@@ -22,6 +23,9 @@ Route::prefix('v1')->group(function () {
         Route::get('me', [AuthController::class, 'me']);
         Route::post('incidents/{incident}/confirm', 
     [IncidentController::class, 'confirm']);
+    Route::get('notifications', [NotificationController::class, 'index']);
+    Route::patch('notifications/{notification}/read', 
+    [NotificationController::class, 'markAsRead']);
 
        Route::apiResource('incidents', IncidentController::class)
     ->only(['index', 'store', 'show', 'update', 'destroy']);

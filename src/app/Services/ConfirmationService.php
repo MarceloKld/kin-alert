@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Services;
-
+use App\Exceptions\AlreadyConfirmedException;
 use App\Events\IncidentValidated;
 use App\Models\Incident;
 use App\Models\Confirmation;
@@ -27,9 +27,9 @@ class ConfirmationService
                 ->where('utilisateur_id', $userId)
                 ->exists();
 
-            if ($existe) {
-                throw new \Exception("Vous avez déjà confirmé cet incident.");
-            }
+           if ($existe) {
+    throw new AlreadyConfirmedException();
+}
 
             // ✅ Ajouter confirmation
             Confirmation::create([
