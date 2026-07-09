@@ -36,5 +36,9 @@ R/php artisan test
 R/php artisan tinker
 bcrypt('password123');
 
+\#7.ACTUALISER AVCE TEST
+R/php artisan optimize:clear
+php artisan test
+
 
 

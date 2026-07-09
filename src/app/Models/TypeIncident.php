@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class TypeIncident extends Model
 {
+    use HasFactory;
     /**
      * Nom réel de la table en base
      * IMPORTANT : ta table s'appelle "types_incidents"
