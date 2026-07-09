@@ -2,13 +2,12 @@
 
 namespace App\Listeners;
 
+use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Events\IncidentValidated;
 use App\Models\Notification;
-
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class SendIncidentValidatedNotification
+class SendIncidentValidatedNotification implements ShouldQueue
 {
     /**
      * Create the event listener.
