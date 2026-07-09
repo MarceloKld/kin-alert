@@ -110,5 +110,37 @@ public function confirm(Incident $incident, ConfirmationService $service)
     ]);
 }
 
+public function reject(Incident $incident)
+{
+    $this->authorize('reject', $incident);
+
+    if ($incident->statut === 'rejete') {
+        return response()->json([
+            'message' => 'Incident déjà rejeté.'
+        ], 409);
+    }
+
+    $ancienStatut = $incident->statut;
+
+    $incident->update([
+        'statut' => 'rejete'
+    ]);
+
+    // Historique
+    \App\Models\HistoriqueStatut::create([
+        'incident_id' => $incident->id,
+        'ancien_statut' => $ancienStatut,
+        'nouveau_statut' => 'rejete',
+        'modifie_par' => auth()->id()
+    ]);
+
+    return response()->json([
+        'message' => 'Incident rejeté avec succès.',
+        'data' => new \App\Http\Resources\IncidentResource(
+            $incident->load(['utilisateur', 'commune', 'type'])
+        )
+    ]);
+}
+
 
 }

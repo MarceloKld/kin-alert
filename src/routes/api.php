@@ -26,6 +26,8 @@ Route::prefix('v1')->group(function () {
     Route::get('notifications', [NotificationController::class, 'index']);
     Route::patch('notifications/{notification}/read', 
     [NotificationController::class, 'markAsRead']);
+    Route::patch('incidents/{incident}/reject', 
+    [IncidentController::class, 'reject']);
 
        Route::apiResource('incidents', IncidentController::class)
     ->only(['index', 'store', 'show', 'update', 'destroy']);

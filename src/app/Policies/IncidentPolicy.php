@@ -62,4 +62,13 @@ class IncidentPolicy
 
         return $incident->utilisateur_id === $user->id;
     }
+
+    /**
+ * Rejeter un incident
+ */
+public function reject(Utilisateur $user, Incident $incident): bool
+{
+    return in_array($user->role, ['administrateur', 'moderateur']);
+}
+
 }
