@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Services\AuditService;
 use App\Services\ConfirmationService;
 use App\Http\Resources\IncidentResource;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -110,15 +111,9 @@ public function confirm(Incident $incident, ConfirmationService $service)
     ]);
 }
 
-public function reject(Incident $incident)
+public function reject(Incident $incident, AuditService $audit)
 {
     $this->authorize('reject', $incident);
-
-    if ($incident->statut === 'rejete') {
-        return response()->json([
-            'message' => 'Incident déjà rejeté.'
-        ], 409);
-    }
 
     $ancienStatut = $incident->statut;
 
@@ -126,7 +121,6 @@ public function reject(Incident $incident)
         'statut' => 'rejete'
     ]);
 
-    // Historique
     \App\Models\HistoriqueStatut::create([
         'incident_id' => $incident->id,
         'ancien_statut' => $ancienStatut,
@@ -134,11 +128,11 @@ public function reject(Incident $incident)
         'modifie_par' => auth()->id()
     ]);
 
+    // ✅ Audit
+    $audit->log('reject_incident', 'incident', $incident->id);
+
     return response()->json([
-        'message' => 'Incident rejeté avec succès.',
-        'data' => new \App\Http\Resources\IncidentResource(
-            $incident->load(['utilisateur', 'commune', 'type'])
-        )
+        'message' => 'Incident rejeté avec succès.'
     ]);
 }
 
