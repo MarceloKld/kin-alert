@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Filters\IncidentFilter;
 use App\Services\AuditService;
 use App\Services\ConfirmationService;
 use App\Http\Resources\IncidentResource;
@@ -26,13 +27,14 @@ class IncidentController extends Controller
     /**
      * Liste paginée des incidents
      */
-   public function index()
+   public function index(IncidentFilter $filter)
 {
     $this->authorize('viewAny', Incident::class);
 
-    $incidents = Incident::with(['utilisateur', 'commune', 'type'])
-        ->latest('date_creation')
-        ->paginate(10);
+    $query = Incident::with(['utilisateur', 'commune', 'type'])
+        ->latest('date_creation');
+
+    $incidents = $filter->apply($query)->paginate(10);
 
     return IncidentResource::collection($incidents);
 }
