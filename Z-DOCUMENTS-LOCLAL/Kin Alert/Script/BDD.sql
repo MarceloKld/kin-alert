@@ -115,6 +115,22 @@ CREATE TABLE commentaires (
 );
 
 
+CREATE TABLE audit_logs (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    utilisateur_id BIGINT NULL,
+    action VARCHAR(100) NOT NULL,
+    cible VARCHAR(100) NOT NULL,
+    cible_id BIGINT NULL,
+    ip_address VARCHAR(45),
+    user_agent TEXT,
+    date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (utilisateur_id)
+        REFERENCES utilisateurs(id)
+        ON DELETE SET NULL
+);
+
+
 -- PERSONNALISATION
 
 --Ajout relation
