@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use Illuminate\Support\Facades\Cache;
 use App\Filters\IncidentFilter;
 use App\Services\AuditService;
 use App\Services\ConfirmationService;
@@ -29,14 +30,20 @@ class IncidentController extends Controller
      */
    public function index(IncidentFilter $filter)
 {
-    $this->authorize('viewAny', Incident::class);
+      //$this->authorize('viewAny', Incident::class);
 
-    $query = Incident::with(['utilisateur', 'commune', 'type'])
-        ->latest('date_creation');
+    return Cache::remember(
+        'incidents_page_' . request()->get('page', 1),
+        60,
+        function () use ($filter) {
+            $query = Incident::with(['utilisateur','commune','type'])
+                ->latest('date_creation');
 
-    $incidents = $filter->apply($query)->paginate(10);
+            $incidents = $filter->apply($query)->paginate(10);
 
-    return IncidentResource::collection($incidents);
+            return IncidentResource::collection($incidents);
+        }
+    );
 }
 
     /**
