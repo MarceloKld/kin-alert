@@ -3,6 +3,7 @@
 namespace App\Filters;
 
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Builder;
 
 class IncidentFilter
 {
@@ -19,21 +20,23 @@ class IncidentFilter
         $this->request = $request;
     }
 
-    public function apply($query)
+    public function apply(Builder $query): Builder
     {
         foreach ($this->allowedFilters as $filter) {
-            if ($this->request->has($filter)) {
+
+            if ($this->request->filled($filter)) {
                 $query->where($filter, $this->request->get($filter));
             }
         }
 
-        // Recherche texte
-        if ($this->request->has('search')) {
+        // 🔍 Recherche texte sécurisée
+        if ($this->request->filled('search')) {
+
             $search = $this->request->get('search');
 
             $query->where(function ($q) use ($search) {
-                $q->where('titre', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
+                $q->where('titre', 'LIKE', "%{$search}%")
+                  ->orWhere('description', 'LIKE', "%{$search}%");
             });
         }
 

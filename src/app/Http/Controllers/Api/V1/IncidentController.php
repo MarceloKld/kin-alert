@@ -30,20 +30,19 @@ class IncidentController extends Controller
      */
    public function index(IncidentFilter $filter)
 {
-      //$this->authorize('viewAny', Incident::class);
+    $this->authorize('viewAny', Incident::class);
 
-    return Cache::remember(
-        'incidents_page_' . request()->get('page', 1),
-        60,
-        function () use ($filter) {
-            $query = Incident::with(['utilisateur','commune','type'])
-                ->latest('date_creation');
+    $cacheKey = 'incidents_' . md5(request()->fullUrl());
 
-            $incidents = $filter->apply($query)->paginate(10);
+    return Cache::remember($cacheKey, 60, function () use ($filter) {
 
-            return IncidentResource::collection($incidents);
-        }
-    );
+        $query = Incident::with(['utilisateur', 'commune', 'type'])
+            ->latest('date_creation');
+
+        $incidents = $filter->apply($query)->paginate(10);
+
+        return IncidentResource::collection($incidents);
+    });
 }
 
     /**
