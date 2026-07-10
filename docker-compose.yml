@@ -43,6 +43,12 @@ services:
     networks:
       - kin_alert_network
 
+  redis:
+   image: redis:alpine
+   container_name: kin_alert_redis
+   ports:
+    - "6379:6379"
+
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: kin_alert_pma

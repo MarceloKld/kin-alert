@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-
+use Illuminate\Support\Facades\Log;
 use App\Models\AuditLog;
 
 class AuditService
@@ -17,5 +17,14 @@ class AuditService
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
         ]);
+
+        Log::channel('audit')->info('Audit Event', [
+        'user_id' => auth()->id(),
+        'action' => $action,
+        'cible' => $cible,
+        'cible_id' => $cibleId,
+        'ip' => request()->ip()
+    ]);
+    
     }
 }
