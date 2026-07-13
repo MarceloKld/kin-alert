@@ -1,5 +1,11 @@
 <?php
 
+use App\Http\Controllers\Api\V1\PreuveController;
+use App\Http\Controllers\Api\V1\VilleController;
+use App\Http\Controllers\Api\V1\CommuneController;
+use App\Http\Controllers\Api\V1\TypeIncidentController;
+use App\Http\Controllers\Api\V1\CommentaireController;
+use App\Http\Controllers\Api\V1\StatisticsController;
 use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\AuthController;
 use Illuminate\Support\Facades\Route;
@@ -29,8 +35,60 @@ Route::prefix('v1')->group(function () {
     Route::patch('incidents/{incident}/reject', 
     [IncidentController::class, 'reject']);
 
-       Route::apiResource('incidents', IncidentController::class)
-    ->only(['index', 'store', 'show', 'update', 'destroy']);
+    //✅ 1️⃣ VILLES
+        Route::apiResource('villes', VilleController::class)
+        ->only(['index', 'store']);
+
+    //✅ 2️⃣ COMMUNES
+        Route::apiResource('communes', CommuneController::class)
+        ->only(['indx', 'store']);
+
+    //✅ 3️⃣ TYPES INCIDENTS
+         Route::apiResource('types-incidents', TypeIncidentController::class)
+         ->only(['index', 'store']);
+
+    //✅ 4️⃣ COMMENTAIRES
+        Route::get('incidents/{incident}/comments',
+    [CommentaireController::class, 'index']);
+
+        Route::post('incidents/{incident}/comments',
+    [CommentaireController::class, 'store']);
+
+    //✅ 5️⃣ PREUVES (Upload)
+        Route::get('incidents/{incident}/preuves',
+    [PreuveController::class, 'index']);
+        Route::post('incidents/{incident}/preuves',
+    [PreuveController::class, 'store']);
+    
+    //✅ 1️⃣ Communes avec plus d’incidents
+        Route::get('statistics/communes-most-incidents',
+    [StatisticsController::class, 'communesMostIncidents']);
+    
+    
+
+        Route::apiResource('incidents', IncidentController::class)
+        ->only(['index', 'store', 'show', 'update', 'destroy']);
+
+
+     //STATISTICS
+        Route::prefix('statistics')->group(function () {
+
+        Route::get('communes-most-incidents',
+    [StatisticsController::class, 'communesMostIncidents']);
+
+        Route::get('incidents-by-type',
+    [StatisticsController::class, 'incidentsByType']);
+
+         Route::get('dashboard',
+    [StatisticsController::class, 'dashboard']);
+
+
+    
+    });
+
+
+
+    
     });
 
 });
