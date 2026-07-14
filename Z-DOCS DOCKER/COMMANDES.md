@@ -40,5 +40,8 @@ bcrypt('password123');
 R/php artisan optimize:clear
 php artisan test
 
+# 8.Démarre tous les containers
+R/docker compose up -d
+
 
 
