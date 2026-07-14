@@ -35,7 +35,10 @@ class StoreIncidentRequest extends FormRequest
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
             'commune_id' => 'required|exists:communes,id',
-            'avenue' => 'nullable|string|max:150'
+            'avenue' => 'nullable|string|max:150',
+
+        // ✅ PHOTO
+        'photo' => 'nullable|image|max:2048'
         ];
     }
 }

@@ -52,6 +52,16 @@ class IncidentResource extends JsonResource
                 ];
             }),
 
+            'preuves' => $this->whenLoaded('preuves', function () {
+    return $this->preuves->map(function ($preuve) {
+        return [
+            'id' => $preuve->id,
+            'url' => asset('storage/' . $preuve->fichier),
+            'type' => $preuve->type_fichier
+        ];
+    });
+}),
+
             'date_creation' => $this->date_creation,
         ];
     }

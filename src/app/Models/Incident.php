@@ -48,6 +48,8 @@ class Incident extends Model
 
     public function preuves()
     {
+        return $this->hasMany(Preuve::class);
+        
         return $this->hasMany(Preuve::class, 'incident_id');
     }
 
@@ -55,4 +57,5 @@ class Incident extends Model
     {
         return $this->hasMany(HistoriqueStatut::class, 'incident_id');
     }
+    
 }
