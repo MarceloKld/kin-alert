@@ -38,14 +38,18 @@ class IncidentService
 
         // 3. Gestion de la photo
         if (request()->hasFile('photo')) {
-            $path = request()->file('photo')->store('preuves', 'public');
 
-            Preuve::create([
-                'incident_id' => $incident->id,
-                'fichier' => $path,
-                'type_fichier' => request()->file('photo')->getClientOriginalExtension()
-            ]);
-        }
+    foreach (request()->file('photo') as $photo) {
+
+        $path = $photo->store('preuves', 'public');
+
+        Preuve::create([
+            'incident_id' => $incident->id,
+            'fichier' => $path,
+            'type_fichier' => $photo->getClientOriginalExtension()
+        ]);
+    }
+}
 
         // 4. Retourne l'incident mis à jour avec ses relations
         return $incident->fresh()->load(['preuves']);

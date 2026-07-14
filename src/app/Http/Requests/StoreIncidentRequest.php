@@ -38,7 +38,8 @@ class StoreIncidentRequest extends FormRequest
             'avenue' => 'nullable|string|max:150',
 
         // ✅ PHOTO
-        'photo' => 'nullable|image|max:2048'
+         'photos' => 'nullable|array',
+         'photos.*' => 'image|max:4096'
         ];
     }
 }

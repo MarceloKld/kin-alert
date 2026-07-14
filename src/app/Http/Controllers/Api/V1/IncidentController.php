@@ -59,13 +59,13 @@ public function store(StoreIncidentRequest $request, IncidentService $service)
         $request->validated(),
         auth()->id()
     );
+    // ✅ IMPORTANT : recharger relations
+    $incident->load(['utilisateur', 'commune', 'type', 'preuves']);
 
    return response()->json([
-    'message' => 'Incident créé avec succès',
-    'data' => new IncidentResource(
-        $incident->load(['utilisateur', 'commune', 'type'])
-    )
-], 201);
+        'message' => 'Incident créé avec succès',
+        'data' => new IncidentResource($incident)
+    ], 201);
 }
 
     /**
