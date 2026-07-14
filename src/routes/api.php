@@ -82,6 +82,9 @@ Route::prefix('v1')->group(function () {
          Route::get('dashboard',
     [StatisticsController::class, 'dashboard']);
 
+    //VOIR LES COMMUNES
+    Route::get('communes', [CommuneController::class, 'index']);
+
 
     
     });

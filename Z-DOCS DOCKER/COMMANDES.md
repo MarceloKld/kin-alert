@@ -44,4 +44,5 @@ php artisan test
 R/docker compose up -d
 
 
-
+# 9.Accède au conteneur
+R/docker exec -it kin_alert_app bash

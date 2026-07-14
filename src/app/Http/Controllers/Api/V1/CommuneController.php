@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Models\Commune;
+use Illuminate\Http\Request;
 
 class CommuneController extends Controller
 {
@@ -13,6 +13,12 @@ class CommuneController extends Controller
 
     public function index()
     {
+       $communes = Commune::with('ville')
+             ->orderBy('nom')
+            ->paginate(10);
+
+        return response()->json($communes);
+
         return Commune::with('ville')->get();
     }
 
