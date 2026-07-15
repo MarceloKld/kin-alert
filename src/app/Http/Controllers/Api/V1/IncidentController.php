@@ -36,12 +36,22 @@ class IncidentController extends Controller
 
     return Cache::remember($cacheKey, 60, function () use ($filter) {
 
-        $query = Incident::with(['utilisateur', 'commune', 'type'])
+        $query = Incident::with(['utilisateur', 'commune', 'type', 'preuves'])
             ->latest('date_creation');
 
-        $incidents = $filter->apply($query)->paginate(10);
+        $query = $filter->apply($query);
 
-        return IncidentResource::collection($incidents);
+        // ✅ Mode carte : retourne tout sans pagination
+        if (request()->boolean('all')) {
+            return IncidentResource::collection($query->get());
+        }
+
+        // ✅ Pagination configurable
+        $perPage = request()->get('per_page', 10);
+
+        return IncidentResource::collection(
+            $query->paginate($perPage)
+        );
     });
 }
 
