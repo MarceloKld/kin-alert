@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\V1\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\IncidentController;
 
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -84,10 +85,12 @@ Route::prefix('v1')->group(function () {
 
     //VOIR LES COMMUNES
     Route::get('communes', [CommuneController::class, 'index']);
-
-
     
     });
+
+      //les incidents créés par l’utilisateur connecté.
+    Route::get('my-incidents', [IncidentController::class, 'myIncidents']);
+
 
 
 

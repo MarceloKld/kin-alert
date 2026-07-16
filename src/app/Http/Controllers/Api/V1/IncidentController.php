@@ -154,5 +154,29 @@ public function reject(Incident $incident, AuditService $audit)
     ]);
 }
 
+/**
+ * ✅ Liste des incidents de l'utilisateur connecté
+ */
+public function myIncidents(IncidentFilter $filter)
+{
+    $userId = auth()->id();
+
+    $query = Incident::with(['commune', 'type', 'preuves'])
+        ->where('utilisateur_id', $userId)
+        ->latest('date_creation');
+
+    $query = $filter->apply($query);
+
+    if (request()->boolean('all')) {
+        return IncidentResource::collection($query->get());
+    }
+
+    $perPage = request()->get('per_page', 10);
+
+    return IncidentResource::collection(
+        $query->paginate($perPage)
+    );
+}
+
 
 }
