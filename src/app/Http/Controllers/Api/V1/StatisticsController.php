@@ -50,4 +50,39 @@ class StatisticsController extends Controller
             'total_utilisateurs' => Utilisateur::count(),
         ]);
     }
+
+    /**
+ * ✅ Dashboard personnel de l'utilisateur connecté
+ */
+public function myDashboard()
+{
+    $userId = auth()->id();
+
+    return response()->json([
+        'total_mes_incidents' => \App\Models\Incident::where('utilisateur_id', $userId)->count(),
+
+        'mes_valides' => \App\Models\Incident::where('utilisateur_id', $userId)
+            ->where('statut', 'valide')
+            ->count(),
+
+        'mes_en_attente' => \App\Models\Incident::where('utilisateur_id', $userId)
+            ->where('statut', 'en_attente')
+            ->count(),
+
+        'mes_rejetes' => \App\Models\Incident::where('utilisateur_id', $userId)
+            ->where('statut', 'rejete')
+            ->count(),
+
+        'total_commentaires_sur_mes_incidents' => \App\Models\Commentaire::whereIn(
+            'incident_id',
+            \App\Models\Incident::where('utilisateur_id', $userId)->pluck('id')
+        )->count(),
+
+        'total_confirmations_sur_mes_incidents' => \App\Models\Confirmation::whereIn(
+            'incident_id',
+            \App\Models\Incident::where('utilisateur_id', $userId)->pluck('id')
+        )->count(),
+    ]);
+}
+
 }
