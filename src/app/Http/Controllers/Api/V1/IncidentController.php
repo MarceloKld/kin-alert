@@ -41,16 +41,9 @@ class IncidentController extends Controller
 
         $query = $filter->apply($query);
 
-        // ✅ Mode carte : retourne tout sans pagination
-        if (request()->boolean('all')) {
-            return IncidentResource::collection($query->get());
-        }
-
-        // ✅ Pagination configurable
-        $perPage = request()->get('per_page', 10);
-
+        // ✅ Retourne TOUS les incidents (sans pagination)
         return IncidentResource::collection(
-            $query->paginate($perPage)
+            $query->get()
         );
     });
 }
