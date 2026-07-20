@@ -157,6 +157,9 @@ public function reject(Incident $incident, AuditService $audit)
 /**
  * ✅ Liste des incidents de l'utilisateur connecté
  */
+/**
+ * ✅ Liste tous les incidents de l'utilisateur connecté (sans pagination)
+ */
 public function myIncidents(IncidentFilter $filter)
 {
     $userId = auth()->id();
@@ -167,14 +170,8 @@ public function myIncidents(IncidentFilter $filter)
 
     $query = $filter->apply($query);
 
-    if (request()->boolean('all')) {
-        return IncidentResource::collection($query->get());
-    }
-
-    $perPage = request()->get('per_page', 10);
-
     return IncidentResource::collection(
-        $query->paginate($perPage)
+        $query->get()
     );
 }
 
