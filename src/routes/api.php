@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\IncidentController;
+use Illuminate\Support\Facades\Password;
 
 
 /*
@@ -22,7 +23,9 @@ use App\Http\Controllers\Api\V1\IncidentController;
 
 Route::prefix('v1')->group(function () {
 
+//AUTHOTENTIFICATION
     Route::post('login', [AuthController::class, 'login']);
+    Route::post('register', [AuthController::class, 'register']);
 
     Route::middleware('auth:sanctum')->group(function () {
 
@@ -92,6 +95,52 @@ Route::prefix('v1')->group(function () {
 
       //les incidents créés par l’utilisateur connecté.
     Route::get('my-incidents', [IncidentController::class, 'myIncidents']);
+
+
+    //Itinéraire mot de passe oublié
+    Route::post('forgot-password', function (Request $request) {
+
+    $request->validate([
+        'email' => 'required|email'
+    ]);
+
+    $status = Password::sendResetLink(
+        $request->only('email')
+    );
+
+    return $status === Password::RESET_LINK_SENT
+        ? response()->json(['message' => 'Lien envoyé'])
+        : response()->json(['message' => 'Erreur'], 400);
+});
+
+
+//RÉINITIALISER LE MOT DE PASSE
+Route::post('reset-password', function (Request $request) {
+
+    $request->validate([
+        'email' => 'required|email',
+        'token' => 'required',
+        'password' => 'required|min:6|confirmed',
+    ]);
+
+    $status = Password::reset(
+        $request->only('email', 'password', 'password_confirmation', 'token'),
+        function ($user, $password) {
+            $user->mot_de_passe = Hash::make($password);
+            $user->save();
+        }
+    );
+
+    return $status === Password::PASSWORD_RESET
+        ? response()->json(['message' => 'Mot de passe réinitialisé'])
+        : response()->json(['message' => 'Erreur'], 400);
+});
+
+
+
+
+
+
 
 
 

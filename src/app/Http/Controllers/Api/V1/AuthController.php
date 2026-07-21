@@ -66,4 +66,35 @@ class AuthController extends Controller
     {
         return response()->json($request->user());
     }
+//Méthode register(CREATION D'UN UTILISATEUR)
+    public function register(Request $request)
+{
+   $request->validate([
+        'nom' => 'required|string|max:150',
+        'email' => 'required|email|unique:utilisateurs,email',
+        'telephone' => 'required|string|max:20',
+        'password' => 'required|min:6|confirmed'
+    ]);
+
+    $user = Utilisateur::create([
+        'nom' => $request->nom,
+        'email' => $request->email,
+        'telephone' => $request->telephone,
+        'mot_de_passe' => Hash::make($request->password),
+        'role' => 'utilisateur',
+        'statut' => 'actif'
+    ]);
+
+    return response()->json([
+        'message' => 'Utilisateur créé avec succès',
+        'user' => [
+            'id' => $user->id,
+            'nom' => $user->nom,
+            'email' => $user->email,
+            'telephone' => $user->telephone,
+            'role' => $user->role
+        ]
+    ], 201);
+}
+
 }
