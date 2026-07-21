@@ -14,3 +14,4 @@ RUN apt-get update && apt-get install -y \
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
+RUN echo "date.timezone=Africa/Lagos" > /usr/local/etc/php/conf.d/timezone.ini
