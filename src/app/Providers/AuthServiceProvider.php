@@ -6,6 +6,7 @@ use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvid
 
 use App\Models\Incident;
 use App\Policies\IncidentPolicy;
+use Illuminate\Auth\Notifications\ResetPassword;
 
 /**
  * AuthServiceProvider
@@ -26,8 +27,11 @@ class AuthServiceProvider extends ServiceProvider
      * Boot method
      */
     public function boot(): void
-    {
-        // Laravel 11 auto-enregistre les policies
-        // Aucun code supplémentaire nécessaire ici.
+    {$this->registerPolicies();
+
+    ResetPassword::createUrlUsing(function ($user, string $token) {
+        return 'http://http://localhost:5173/reset-password?token=' 
+            . $token . '&email=' . urlencode($user->email);
+    });
     }
 }
