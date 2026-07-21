@@ -11,8 +11,6 @@ use App\Http\Controllers\Api\V1\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\IncidentController;
 use Illuminate\Support\Facades\Password;
-
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -20,13 +18,25 @@ use Illuminate\Support\Facades\Password;
 | Toutes les routes sont préfixées automatiquement par /api
 | Nous ajoutons /v1 pour versionner proprement l’API
 */
-
 Route::prefix('v1')->group(function () {
 
+// ✅ ROUTES PUBLIQUES
+
 //AUTHOTENTIFICATION
-    Route::post('login', [AuthController::class, 'login']);
+   Route::post('login', [AuthController::class, 'login']);
     Route::post('register', [AuthController::class, 'register']);
 
+     //Itinéraire mot de passe oublié
+    Route::post('forgot-password', [AuthController::class, 'forgotPassword'])
+    ->withoutMiddleware(['auth:sanctum']);
+    
+    //RÉINITIALISER LE MOT DE PASSE
+    Route::post('reset-password', [AuthController::class, 'resetPassword']);
+
+    Route::post('test-public', function () {
+    return response()->json(['ok' => true]);
+});
+    // ✅ ROUTES PROTÉGÉES
     Route::middleware('auth:sanctum')->group(function () {
 
         Route::post('logout', [AuthController::class, 'logout']);
@@ -68,11 +78,8 @@ Route::prefix('v1')->group(function () {
         Route::get('statistics/communes-most-incidents',
     [StatisticsController::class, 'communesMostIncidents']);
     
-    
-
         Route::apiResource('incidents', IncidentController::class)
         ->only(['index', 'store', 'show', 'update', 'destroy']);
-
 
      //STATISTICS
         Route::prefix('statistics')->group(function () {
@@ -95,46 +102,9 @@ Route::prefix('v1')->group(function () {
 
       //les incidents créés par l’utilisateur connecté.
     Route::get('my-incidents', [IncidentController::class, 'myIncidents']);
+   
 
 
-    //Itinéraire mot de passe oublié
-    Route::post('forgot-password', function (Request $request) {
-
-    $request->validate([
-        'email' => 'required|email'
-    ]);
-
-    $status = Password::sendResetLink(
-        $request->only('email')
-    );
-
-    return $status === Password::RESET_LINK_SENT
-        ? response()->json(['message' => 'Lien envoyé'])
-        : response()->json(['message' => 'Erreur'], 400);
-});
-
-
-//RÉINITIALISER LE MOT DE PASSE
-Route::post('reset-password', function (Request $request) {
-
-    $request->validate([
-        'email' => 'required|email',
-        'token' => 'required',
-        'password' => 'required|min:6|confirmed',
-    ]);
-
-    $status = Password::reset(
-        $request->only('email', 'password', 'password_confirmation', 'token'),
-        function ($user, $password) {
-            $user->mot_de_passe = Hash::make($password);
-            $user->save();
-        }
-    );
-
-    return $status === Password::PASSWORD_RESET
-        ? response()->json(['message' => 'Mot de passe réinitialisé'])
-        : response()->json(['message' => 'Erreur'], 400);
-});
 
 
 

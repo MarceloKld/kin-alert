@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Utilisateur;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 
 /**
  * AuthController
@@ -95,6 +96,50 @@ class AuthController extends Controller
             'role' => $user->role
         ]
     ], 201);
+}
+
+//Mot de passe oublié
+public function forgotPassword(Request $request)
+{
+    $request->validate([
+        'email' => 'required|email'
+    ]);
+
+    $status = Password::sendResetLink(
+        $request->only('email')
+    );
+
+    return response()->json([
+        'message' => 'Lien envoyé'
+    ]);
+}
+
+//RÉINITIALISER LE MOT DE PASSE
+public function resetPassword(Request $request)
+{
+    $request->validate([
+        'email' => 'required|email',
+        'token' => 'required',
+        'password' => 'required|min:6|confirmed',
+    ]);
+
+    $status = Password::reset(
+        $request->only('email', 'password', 'password_confirmation', 'token'),
+        function ($user, $password) {
+            $user->mot_de_passe = Hash::make($password);
+            $user->save();
+        }
+    );
+
+    if ($status === Password::PASSWORD_RESET) {
+        return response()->json([
+            'message' => 'Mot de passe réinitialisé'
+        ]);
+    }
+
+    return response()->json([
+        'message' => 'Token invalide ou expiré'
+    ], 400);
 }
 
 }
