@@ -26,4 +26,8 @@ RUN php artisan config:clear
 
 EXPOSE 8000
 
-CMD php artisan serve --host=0.0.0.0 --port=8000
+# Rendre le script d'entrée exécutable
+RUN chmod +x entrypoint.sh
+
+# Lancer via le script entrypoint
+CMD ["sh", "entrypoint.sh"]
