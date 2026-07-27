@@ -12,7 +12,10 @@ class AuditAdminController extends Controller
     use AuthorizesRequests;
    public function index(Request $request)
 {
-    $this->authorize('accessAdmin', AdminPolicy::class);
+    // Vérification directe du rôle sans passer par les Policies
+        if (!in_array(auth()->user()->role, ['administrateur', 'gestionnaire'])) {
+            abort(403, 'Accès interdit');
+        }
 
     $query = AuditLog::query();
 
@@ -28,6 +31,7 @@ class AuditAdminController extends Controller
         $query->whereDate('date_creation', $request->date);
     }
 
-    return $query->latest()->paginate(20);
+    // Utilisation explicite de 'date_creation' au lieu du 'created_at' par défaut
+        return response()->json($query->latest('date_creation')->get());
 }
 }
