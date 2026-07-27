@@ -7,6 +7,7 @@ use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvid
 use App\Models\Incident;
 use App\Policies\IncidentPolicy;
 use Illuminate\Auth\Notifications\ResetPassword;
+use App\Policies\AdminPolicy;
 
 /**
  * AuthServiceProvider
@@ -21,6 +22,9 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         Incident::class => IncidentPolicy::class,
+        Utilisateur::class => AdminPolicy::class, // <-- Mapping officiel
+        \App\Models\Utilisateur::class => \App\Policies\UtilisateurPolicy::class,
+    // si tu utilises AdminPolicy pour une classe spécifique,
     ];
 
     /**

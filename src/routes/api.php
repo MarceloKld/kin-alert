@@ -11,6 +11,13 @@ use App\Http\Controllers\Api\V1\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\IncidentController;
 use Illuminate\Support\Facades\Password;
+
+
+use App\Http\Controllers\Api\V1\Admin\UserAdminController;
+use App\Http\Controllers\Api\V1\Admin\IncidentAdminController;
+use App\Http\Controllers\Api\V1\Admin\AuditAdminController;
+use App\Http\Controllers\Api\V1\Admin\StatisticsAdminController;
+use App\Http\Controllers\Api\V1\Admin\NotificationAdminController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -48,6 +55,36 @@ Route::prefix('v1')->group(function () {
     [NotificationController::class, 'markAsRead']);
     Route::patch('incidents/{incident}/reject', 
     [IncidentController::class, 'reject']);
+
+
+    // ✅ ADMINISTRATION (/v1/admin/...)
+        Route::prefix('admin')->group(function () {
+
+            // USERS
+            Route::get('users', [UserAdminController::class, 'index']);
+            Route::get('users/{user}', [UserAdminController::class, 'show']);
+            Route::patch('users/{user}/suspend', [UserAdminController::class, 'suspend']);
+            Route::patch('users/{user}/activate', [UserAdminController::class, 'activate']);
+            Route::delete('users/{user}', [UserAdminController::class, 'destroy']);
+
+            // MANAGERS
+            Route::post('managers', [UserAdminController::class, 'createManager']);
+            Route::get('managers', [UserAdminController::class, 'listManagers']);
+            Route::delete('managers/{user}', [UserAdminController::class, 'deleteManager']);
+
+            // INCIDENTS
+            Route::patch('incidents/{incident}/force-status', [IncidentAdminController::class, 'forceStatus']);
+
+            // AUDIT
+            Route::get('audit-logs', [AuditAdminController::class, 'index']);
+
+            // BROADCAST NOTIFICATION
+            Route::post('notifications/broadcast', [NotificationAdminController::class, 'broadcast']);
+
+            // GLOBAL STATS
+            Route::get('statistics/global', [StatisticsAdminController::class, 'global']);
+        });
+
 
     //✅ 1️⃣ VILLES
         Route::apiResource('villes', VilleController::class)
