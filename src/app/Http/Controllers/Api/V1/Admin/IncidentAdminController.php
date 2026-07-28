@@ -133,4 +133,78 @@ public function show($id)
     return new AdminIncidentDetailResource($incident);
 }
 
+//SUPPRIMER
+public function destroy($id)
+{
+    $this->authorize('accessAdmin', \App\Models\Utilisateur::class);
+
+    $incident = Incident::findOrFail($id);
+
+    if ($incident->deleted_at !== null) {
+        return response()->json([
+            'message' => 'Incident déjà supprimé'
+        ], 409);
+    }
+
+    DB::transaction(function () use ($incident) {
+
+        $ancien = $incident->statut;
+
+        $incident->delete();
+
+        HistoriqueStatut::create([
+            'incident_id' => $incident->id,
+            'ancien_statut' => $ancien,
+            'nouveau_statut' => 'supprime',
+            'modifie_par' => auth()->id()
+        ]);
+
+        app(AuditService::class)->log(
+            'delete_incident',
+            'incident',
+            $incident->id
+        );
+    });
+
+    return response()->json([
+        'message' => 'Incident supprimé avec succès'
+    ], 200);
+}
+
+//RESTAURER
+public function restore($id)
+{
+    $this->authorize('accessAdmin', \App\Models\Utilisateur::class);
+
+    $incident = Incident::withTrashed()->findOrFail($id);
+
+    if ($incident->deleted_at === null) {
+        return response()->json([
+            'message' => 'Incident non supprimé'
+        ], 409);
+    }
+
+    DB::transaction(function () use ($incident) {
+
+        $incident->restore();
+
+        HistoriqueStatut::create([
+            'incident_id' => $incident->id,
+            'ancien_statut' => 'supprime',
+            'nouveau_statut' => $incident->statut,
+            'modifie_par' => auth()->id()
+        ]);
+
+        app(AuditService::class)->log(
+            'restore_incident',
+            'incident',
+            $incident->id
+        );
+    });
+
+    return response()->json([
+        'message' => 'Incident restauré avec succès'
+    ], 200);
+}
+
 }

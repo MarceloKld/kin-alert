@@ -82,6 +82,8 @@ Route::prefix('v1')->group(function () {
             Route::patch('incidents/{incident}/force-status', [IncidentAdminController::class, 'forceStatus']);
              Route::get('incidents', [IncidentAdminController::class, 'index']);
              Route::get('incidents/{incident}', [IncidentAdminController::class, 'show']);
+             Route::delete('incidents/{id}', [IncidentAdminController::class, 'destroy']);
+             Route::patch('incidents/{id}/restore', [IncidentAdminController::class, 'restore']);
 
             // AUDIT
             Route::get('audit-logs', [AuditAdminController::class, 'index']);
