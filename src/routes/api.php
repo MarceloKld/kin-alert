@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\V1\Admin\IncidentAdminController;
 use App\Http\Controllers\Api\V1\Admin\AuditAdminController;
 use App\Http\Controllers\Api\V1\Admin\StatisticsAdminController;
 use App\Http\Controllers\Api\V1\Admin\NotificationAdminController;
+use App\Http\Controllers\Api\V1\Admin\AdminDashboardController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -93,6 +94,9 @@ Route::prefix('v1')->group(function () {
 
             // GLOBAL STATS
             Route::get('statistics/global', [StatisticsAdminController::class, 'global']);
+
+            //DASHBOARD GLOBAL PREMIUM
+            Route::get('dashboard', [AdminDashboardController::class, 'index']);
         });
 
 
@@ -149,6 +153,9 @@ Route::prefix('v1')->group(function () {
 
       //les incidents créés par l’utilisateur connecté.
     Route::get('my-incidents', [IncidentController::class, 'myIncidents']);
+
+    
+
    
 
 
