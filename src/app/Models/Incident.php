@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Commentaire;
 
 class Incident extends Model
 {
@@ -59,5 +60,10 @@ class Incident extends Model
     {
         return $this->hasMany(HistoriqueStatut::class, 'incident_id');
     }
+
+    public function commentaires()
+{
+    return $this->hasMany(Commentaire::class, 'incident_id');
+}
     
 }

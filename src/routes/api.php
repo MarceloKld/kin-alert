@@ -61,7 +61,7 @@ Route::prefix('v1')->group(function () {
        Route::prefix('admin')
     ->middleware(['auth:sanctum', 'can:accessAdmin,App\Models\Utilisateur'])
     ->group(function () {
-        Route::get('incidents', [IncidentAdminController::class, 'index']);
+       
             // USERS
             Route::get('users', [UserAdminController::class, 'index']);
             Route::get('users/{user}', [UserAdminController::class, 'show']);
@@ -80,6 +80,8 @@ Route::prefix('v1')->group(function () {
 
             // INCIDENTS
             Route::patch('incidents/{incident}/force-status', [IncidentAdminController::class, 'forceStatus']);
+             Route::get('incidents', [IncidentAdminController::class, 'index']);
+             Route::get('incidents/{incident}', [IncidentAdminController::class, 'show']);
 
             // AUDIT
             Route::get('audit-logs', [AuditAdminController::class, 'index']);

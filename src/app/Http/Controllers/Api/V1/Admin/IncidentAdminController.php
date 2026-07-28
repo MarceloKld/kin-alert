@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use App\Events\IncidentValidated;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Http\Resources\AdminIncidentResource;
+use App\Http\Resources\AdminIncidentDetailResource;
 
 
 class IncidentAdminController extends Controller
@@ -111,4 +112,25 @@ public function index(Request $request)
 
     return AdminIncidentResource::collection($incidents);
 }
+
+//Vue DÉTAILLÉE PREMIUM admin(ID)
+public function show($id)
+{
+    $this->authorize('accessAdmin', \App\Models\Utilisateur::class);
+
+    $incident = Incident::withTrashed()
+        ->with([
+            'utilisateur',
+            'commune',
+            'typeIncident',
+            'preuves',
+            'confirmations.utilisateur',
+            'historiques',
+            'commentaires.utilisateur'
+        ])
+        ->findOrFail($id);
+
+    return new AdminIncidentDetailResource($incident);
+}
+
 }
