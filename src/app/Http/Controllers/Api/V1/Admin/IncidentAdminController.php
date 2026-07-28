@@ -9,9 +9,9 @@ use App\Models\HistoriqueStatut;
 use App\Services\AuditService;
 use Illuminate\Support\Facades\DB;
 use App\Events\IncidentValidated;
-
-
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use App\Http\Resources\AdminIncidentResource;
+
 
 class IncidentAdminController extends Controller
 {
@@ -59,5 +59,56 @@ class IncidentAdminController extends Controller
     return response()->json([
         'message' => 'Statut forcé avec succès'
     ], 200);
+}
+
+//INCIDENT ADMIN CONTROLLER
+public function index(Request $request)
+{
+    $this->authorize('accessAdmin', \App\Models\Utilisateur::class);
+
+    $perPage = min($request->get('per_page', 20), 100);
+
+    $query = Incident::query()
+        ->withTrashed()
+        ->with(['utilisateur', 'commune', 'typeIncident']);
+
+    // ✅ FILTRES
+
+    if ($request->filled('status')) {
+        $query->where('statut', $request->status);
+    }
+
+    if ($request->filled('type_incident_id')) {
+        $query->where('type_incident_id', $request->type_incident_id);
+    }
+
+    if ($request->filled('commune_id')) {
+        $query->where('commune_id', $request->commune_id);
+    }
+
+    if ($request->filled('confirmations_min')) {
+        $query->where('nombre_confirmations', '>=', $request->confirmations_min);
+    }
+
+    if ($request->filled('date_from')) {
+        $query->whereDate('date_creation', '>=', $request->date_from);
+    }
+
+    if ($request->filled('date_to')) {
+        $query->whereDate('date_creation', '<=', $request->date_to);
+    }
+
+    if ($request->filled('search')) {
+        $query->where(function ($q) use ($request) {
+            $q->where('titre', 'like', '%' . $request->search . '%')
+              ->orWhere('description', 'like', '%' . $request->search . '%');
+        });
+    }
+
+    $incidents = $query
+        ->orderByDesc('date_creation')
+        ->paginate($perPage);
+
+    return AdminIncidentResource::collection($incidents);
 }
 }

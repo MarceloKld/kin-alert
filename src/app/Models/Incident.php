@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Incident extends Model
 {
     use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes;
     use HasFactory;
     protected $table = 'incidents';
 

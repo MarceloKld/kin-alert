@@ -61,6 +61,7 @@ Route::prefix('v1')->group(function () {
        Route::prefix('admin')
     ->middleware(['auth:sanctum', 'can:accessAdmin,App\Models\Utilisateur'])
     ->group(function () {
+        Route::get('incidents', [IncidentAdminController::class, 'index']);
             // USERS
             Route::get('users', [UserAdminController::class, 'index']);
             Route::get('users/{user}', [UserAdminController::class, 'show']);
