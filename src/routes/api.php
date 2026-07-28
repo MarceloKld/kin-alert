@@ -104,6 +104,9 @@ Route::prefix('v1')->group(function () {
             //PERFORMANCE DES GESTIONNAIRES
             Route::get('statistics/moderators-performance', [StatisticsAdminController::class, 'moderatorsPerformance']);
 
+            //AUDIT LOGS PAR UTILISATEUR
+            Route::get('users/{id}/audit-logs', [AuditAdminController::class, 'logsByUser']);
+
         });
 
 
