@@ -107,6 +107,9 @@ Route::prefix('v1')->group(function () {
             //AUDIT LOGS PAR UTILISATEUR
             Route::get('users/{id}/audit-logs', [AuditAdminController::class, 'logsByUser']);
 
+            //NOTIFICATION CIBLÉE SÉCURISÉE
+            Route::post('notifications/send', [NotificationAdminController::class, 'sendToUsers']);
+
         });
 
 
