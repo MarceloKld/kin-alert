@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Incident extends Model
 {
+    use HasFactory, SoftDeletes;
     use HasFactory;
     protected $table = 'incidents';
 
@@ -36,7 +38,7 @@ class Incident extends Model
         return $this->belongsTo(Commune::class, 'commune_id');
     }
 
-    public function type()
+    public function typeIncident()
     {
         return $this->belongsTo(TypeIncident::class, 'type_incident_id');
     }

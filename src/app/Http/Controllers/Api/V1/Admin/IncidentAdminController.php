@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Incident;
 use App\Models\HistoriqueStatut;
 use App\Services\AuditService;
+use Illuminate\Support\Facades\DB;
+use App\Events\IncidentValidated;
 
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -14,25 +16,48 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 class IncidentAdminController extends Controller
 {
     use AuthorizesRequests;
-   public function forceStatus(Request $request, Incident $incident)
+  public function forceStatus(Request $request, Incident $incident)
 {
+    $this->authorize('adminOnly', \App\Models\Utilisateur::class);
+
     $request->validate([
         'status' => 'required|in:valide,rejete,en_attente'
     ]);
 
-    $ancien = $incident->statut;
+    if ($incident->statut === $request->status) {
+        return response()->json([
+            'message' => 'Le statut est déjà défini'
+        ], 409);
+    }
 
-    $incident->update(['statut' => $request->status]);
+    DB::transaction(function () use ($incident, $request) {
 
-    HistoriqueStatut::create([
-        'incident_id' => $incident->id,
-        'ancien_statut' => $ancien,
-        'nouveau_statut' => $request->status,
-        'modifie_par' => auth()->id()
-    ]);
+        $ancien = $incident->statut;
 
-    app(AuditService::class)->log('force_status', 'incident', $incident->id);
+        $incident->update([
+            'statut' => $request->status
+        ]);
 
-    return response()->json(['message' => 'Statut forcé']);
+        HistoriqueStatut::create([
+            'incident_id' => $incident->id,
+            'ancien_statut' => $ancien,
+            'nouveau_statut' => $request->status,
+            'modifie_par' => auth()->id()
+        ]);
+
+        if ($request->status === 'valide') {
+            event(new IncidentValidated($incident));
+        }
+
+        app(AuditService::class)->log(
+            'force_status',
+            'incident',
+            $incident->id
+        );
+    });
+
+    return response()->json([
+        'message' => 'Statut forcé avec succès'
+    ], 200);
 }
 }
