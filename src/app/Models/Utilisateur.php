@@ -54,4 +54,15 @@ class Utilisateur extends Authenticatable
     {
         return $this->hasMany(Notification::class, 'utilisateur_id');
     }
+
+    public function isAdmin(): bool
+{
+    return $user->role === 'administrateur';
+}
+
+public function isGestionnaire(): bool
+{
+    return $this->role === 'gestionnaire';
+}
+
 }

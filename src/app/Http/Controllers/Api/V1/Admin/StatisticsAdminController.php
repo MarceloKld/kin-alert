@@ -13,9 +13,6 @@ class StatisticsAdminController extends Controller
     use AuthorizesRequests;
     public function global()
 {
-    if (!in_array(auth()->user()->role, ['administrateur', 'gestionnaire'])) {
-            abort(403, 'Accès interdit');
-        }
 
     return response()->json([
         'total_users' => Utilisateur::count(),

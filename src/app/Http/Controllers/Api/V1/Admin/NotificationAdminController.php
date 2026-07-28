@@ -14,10 +14,6 @@ class NotificationAdminController extends Controller
     use AuthorizesRequests;
     public function broadcast(Request $request)
 {
-    if (auth()->user()->role !== 'administrateur') {
-            abort(403, 'Accès interdit');
-        }
-
     $request->validate([
         'message' => 'required|string'
     ]);

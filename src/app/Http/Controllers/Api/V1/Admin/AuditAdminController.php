@@ -12,11 +12,6 @@ class AuditAdminController extends Controller
     use AuthorizesRequests;
    public function index(Request $request)
 {
-    // Vérification directe du rôle sans passer par les Policies
-        if (!in_array(auth()->user()->role, ['administrateur', 'gestionnaire'])) {
-            abort(403, 'Accès interdit');
-        }
-
     $query = AuditLog::query();
 
     if ($request->user_id) {

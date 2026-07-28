@@ -23,7 +23,7 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         Incident::class => IncidentPolicy::class,
         Utilisateur::class => AdminPolicy::class, // <-- Mapping officiel
-        \App\Models\Utilisateur::class => \App\Policies\UtilisateurPolicy::class,
+       \App\Models\Utilisateur::class => \App\Policies\AdminPolicy::class,
     // si tu utilises AdminPolicy pour une classe spécifique,
     ];
 

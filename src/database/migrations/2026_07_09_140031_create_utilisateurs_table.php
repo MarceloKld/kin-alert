@@ -17,7 +17,7 @@ return new class extends Migration
     $table->string('email', 150)->unique();
     $table->string('mot_de_passe');
     $table->string('telephone', 20)->nullable();
-    $table->enum('role', ['utilisateur','moderateur','administrateur'])
+    $table->enum('role', ['utilisateur','gestionnaire','administrateur'])
           ->default('utilisateur');
     $table->enum('statut', ['actif','suspendu'])
           ->default('actif');

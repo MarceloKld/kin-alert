@@ -58,8 +58,9 @@ Route::prefix('v1')->group(function () {
 
 
     // ✅ ADMINISTRATION (/v1/admin/...)
-        Route::prefix('admin')->group(function () {
-
+       Route::prefix('admin')
+    ->middleware(['auth:sanctum', 'can:accessAdmin,App\Models\Utilisateur'])
+    ->group(function () {
             // USERS
             Route::get('users', [UserAdminController::class, 'index']);
             Route::get('users/{user}', [UserAdminController::class, 'show']);

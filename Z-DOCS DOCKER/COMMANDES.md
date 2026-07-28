@@ -46,3 +46,11 @@ R/docker compose up -d
 
 # 9.Accède au conteneur
 R/docker exec -it kin_alert_app bash
+
+# 10.CREER UN FICHIER DANS LE CONTENEUR
+R/php artisan make:controller Api/V1/Admin/GestionnaireAdminController
+
+# 11.ACTUALISER COMPLETS
+R/php artisan config:clear
+php artisan cache:clear
+php artisan optimize:clear

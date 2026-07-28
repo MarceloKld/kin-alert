@@ -16,10 +16,6 @@ class IncidentAdminController extends Controller
     use AuthorizesRequests;
    public function forceStatus(Request $request, Incident $incident)
 {
-    if (!in_array(auth()->user()->role, ['administrateur', 'gestionnaire', 'moderateur'])) {
-            abort(403, 'Accès interdit');
-        }
-
     $request->validate([
         'status' => 'required|in:valide,rejete,en_attente'
     ]);

@@ -13,19 +13,11 @@ class UserAdminController extends Controller
     use AuthorizesRequests;
     public function index()
 {
-    if (!in_array(auth()->user()->role, ['administrateur', 'gestionnaire'])) {
-    abort(403, 'Accès interdit');
-}
-
     return Utilisateur::get(); // pagination supprimée
 }
 
 public function suspend(Utilisateur $user)
 {
-    if (!in_array(auth()->user()->role, ['administrateur', 'gestionnaire'])) {
-        abort(403, 'Accès interdit');
-    }
-
     $user->update(['statut' => 'suspendu']);
 
     app(AuditService::class)->log('suspend_user', 'user', $user->id);
@@ -35,10 +27,6 @@ public function suspend(Utilisateur $user)
 
 public function activate(Utilisateur $user)
 {
-    if (!in_array(auth()->user()->role, ['administrateur', 'gestionnaire'])) {
-        abort(403, 'Accès interdit');
-    }
-
     $user->update(['statut' => 'actif']);
 
     app(AuditService::class)->log('activate_user', 'user', $user->id);
@@ -48,9 +36,6 @@ public function activate(Utilisateur $user)
 
 public function destroy(Utilisateur $user)
 {
-    if (auth()->user()->role !== 'administrateur') {
-            abort(403, 'Accès interdit');
-        }
     $user->delete();
 
     app(AuditService::class)->log('delete_user', 'user', $user->id);
