@@ -97,6 +97,8 @@ Route::prefix('v1')->group(function () {
 
             //DASHBOARD GLOBAL PREMIUM
             Route::get('dashboard', [AdminDashboardController::class, 'index']);
+            //STATISTIQUES AVANCÉES PAR PÉRIODE
+            Route::get('statistics/incidents', [StatisticsAdminController::class, 'incidentsByPeriod']);
         });
 
 
