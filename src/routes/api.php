@@ -69,9 +69,13 @@ Route::prefix('v1')->group(function () {
             Route::delete('users/{user}', [UserAdminController::class, 'destroy']);
 
             // MANAGERS
+            //✅ Maintenant seul administrateur peut créer / supprimer gestionnaire.
+           Route::middleware('can:adminOnly,App\Models\Utilisateur')->group(function () {
+
             Route::post('managers', [UserAdminController::class, 'createManager']);
-            Route::get('managers', [UserAdminController::class, 'listManagers']);
-            Route::delete('managers/{user}', [UserAdminController::class, 'deleteManager']);
+             Route::get('managers', [UserAdminController::class, 'listManagers']);
+             Route::delete('managers/{user}', [UserAdminController::class, 'deleteManager']);
+        });
 
             // INCIDENTS
             Route::patch('incidents/{incident}/force-status', [IncidentAdminController::class, 'forceStatus']);
