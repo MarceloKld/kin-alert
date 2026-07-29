@@ -1,6 +1,6 @@
 #!/bin/sh
 
-php artisan migrate --force
+php artisan migrate --force --seed
 php artisan config:cache
 php artisan route:cache
 

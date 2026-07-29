@@ -54,3 +54,7 @@ R/php artisan make:controller Api/V1/Admin/GestionnaireAdminController
 R/php artisan config:clear
 php artisan cache:clear
 php artisan optimize:clear
+
+# 12.Exécuter la migration (sans toucher aux autres tables)
+R/docker compose exec app php artisan migrate
+# (Cette commande applique uniquement les nouvelles migrations en attente, donc toutes tes tables existantes et leurs données restent intactes).

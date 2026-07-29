@@ -68,7 +68,7 @@ class IncidentPolicy
  */
 public function reject(Utilisateur $user, Incident $incident): bool
 {
-    return in_array($user->role, ['administrateur', 'moderateur']);
+    return in_array($user->role, ['administrateur', 'gestionnaire']);
 }
 
 }
