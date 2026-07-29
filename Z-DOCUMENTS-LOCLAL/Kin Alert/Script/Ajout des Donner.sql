@@ -94,33 +94,20 @@ VALUES
 -- 10. Feu en panne à Lingwala (commune_id = 2, type_incident_id = 10)
 ('Feu de signalisation éteint', 'Le feu du croisement ne fonctionne plus, circulation anarchique', 10, -4.326, 15.302, 2, 'Avenue Libération', 'valide', 2, 2);
 
-
 -- =========================
 -- 6️⃣ CONFIRMATIONS
--- =========================
-
 INSERT INTO confirmations (utilisateur_id, incident_id)
 VALUES 
--- 3 citoyens confirment l'inondation à Limete (Incident ID 2 ou 4 selon vos tests)
-(3, 49),
-(4, 50),
-(3, 53),
-
--- Des citoyens confirment l'érosion à Ngaliema (Incident ID 3 ou 5)
-(4, 54),
-(5, 51),
-
--- Confirmations pour la panne d'électricité à Bandalungwa (Incident ID 6)
-(2, 52),
-(1, 52),
-
--- Confirmations pour le nid de poule majeur à Kasa-Vubu (Incident ID 7)
-(5, 53),
-
--- Confirmations pour le tas d'immondices à Lemba (Incident ID 8)
-(1, 54),
-(3, 54);
-
+(3, 3),
+(4, 3),
+(5, 3),
+(4, 4),
+(5, 4),
+(2, 5),
+(1, 5),
+(5, 6),
+(1, 7),
+(3, 7);
 
 -- =========================
 -- 7️⃣ HISTORIQUE STATUTS
@@ -129,25 +116,25 @@ VALUES
 INSERT INTO historique_statuts (incident_id, ancien_statut, nouveau_statut, modifie_par)
 VALUES
 
--- Incident ID 4 (Nid de poule majeur) : Traitement et Résolution
-(49, 'valide', 'en_cours', 1),
-(49, 'en_cours', 'resolu', 1),
+-- Incident ID 6 (Trou béant / Nid de poule) : Traitement et Résolution
+(6, 'valide', 'en_cours', 1),
+(6, 'en_cours', 'resolu', 1),
 
--- Incident ID 5 (Tas d'immondices) : De la création à la validation
-(50, NULL, 'en_attente', 1),
-(50, 'en_attente', 'valide', 1),
+-- Incident ID 7 (Décharge sauvage / Tas d'immondices) : De la création à la validation
+(7, NULL, 'en_attente', 1),
+(7, 'en_attente', 'valide', 1),
 
--- Incident ID 6 (Panne d'électricité) : Signalement et prise en charge urgente
-(51, NULL, 'en_attente', 2),
-(51, 'en_attente', 'en_cours', 1),
+-- Incident ID 5 (Coupure générale / Panne d'électricité) : Signalement et prise en charge
+(5, NULL, 'en_attente', 2),
+(5, 'en_attente', 'en_cours', 1),
 
--- Incident ID 7 (Embouteillage critique) : Signalement, validation puis résolu automatiquement après décoincement
-(52, NULL, 'en_attente', 1),
-(52, 'en_attente', 'valide', 1),
-(52, 'valide', 'resolu', 1),
+-- Incident ID 9 (Blocage total / Embouteillage critique) : Signalement, validation puis résolution
+(9, NULL, 'en_attente', 1),
+(9, 'en_attente', 'valide', 1),
+(9, 'valide', 'resolu', 1),
 
--- Incident ID 8 (Tuyau cassé) : Signalement initial par un citoyen
-(53, NULL, 'en_attente', 2);
+-- Incident ID 8 (Fuite d'eau / Tuyau cassé) : Signalement initial par un citoyen
+(8, NULL, 'en_attente', 2);
 
 
 -- =========================
@@ -170,50 +157,57 @@ VALUES
 (1, 'Rappel : Vous avez un rapport d\'incident en attente de validation depuis plus de 24h.', false),
 (1, 'Modifications de profil effectuées avec succès.', true);
 
-
-
 -- =========================
 -- 9️⃣ PREUVES
 -- =========================
 
 INSERT INTO preuves (incident_id, fichier, type_fichier)
 VALUES
--- Preuves pour l'incident ID 2 (Inondation à Limete)
-(50, 'limete_inondation_sous_station.jpg', 'image'),
-(50, 'video_lumumba_eaux.mp4', 'video'),
+-- Preuves pour l'incident ID 3 (Sous-station Limete inondée)
+(3, 'limete_inondation_sous_station.jpg', 'image'),
+(3, 'video_lumumba_eaux.mp4', 'video'),
 
--- Preuves pour l'incident ID 3 (Érosion à Ngaliema)
-(51, 'ravin_binza_vue_haut.png', 'image'),
-(51, 'progression_erosion_mulele.mp4', 'video'),
+-- Preuves pour l'incident ID 4 (Ravin menaçant à Binza)
+(4, 'ravin_binza_vue_haut.png', 'image'),
+(4, 'progression_erosion_mulele.mp4', 'video'),
 
--- Preuve pour l'incident ID 4 (Panne d'électricité à Bandalungwa)
-(52, 'cable_haute_tension_tousse.jpg', 'image'),
+-- Preuve pour l'incident ID 5 (Coupure générale Bandal Synkin)
+(5, 'cable_haute_tension_tousse.jpg', 'image'),
 
--- Preuve pour l'incident ID 5 (Nid de poule majeur à Kasa-Vubu)
-(52, 'trou_huileries_degats.jpg', 'image'),
+-- Preuve pour l'incident ID 6 (Trou béant sur la chaussée / Huileries)
+(6, 'trou_huileries_degats.jpg', 'image'),
 
--- Preuves pour l'incident ID 6 (Tas d'immondices à Lemba)
-(53, 'immondices_terminus_bypass1.png', 'image'),
-(53, 'immondices_terminus_bypass2.jpg', 'image'),
+-- Preuves pour l'incident ID 7 (Décharge sauvage Terminus / By Pass)
+(7, 'immondices_terminus_bypass1.png', 'image'),
+(7, 'immondices_terminus_bypass2.jpg', 'image'),
 
--- Preuve pour l'incident ID 7 (Tuyau cassé à Barumbu)
-(54, 'fuite_regideso_flambeau.mp4', 'video'),
+-- Preuve pour l'incident ID 8 (Fuite d'eau Regideso / Flambeau)
+(8, 'fuite_regideso_flambeau.mp4', 'video'),
 
--- Preuve pour l'incident ID 8 (Embouteillage à Limete)
-(55, 'blocage_echangeur_camion.jpg', 'image');
+-- Preuve pour l'incident ID 9 (Blocage total Échangeur)
+(9, 'blocage_echangeur_camion.jpg', 'image');
 
 
+-- =========================
+-- COMMENTAIRES
+-- =========================
 
 INSERT INTO commentaires (contenu, utilisateur_id, incident_id)
 VALUES 
--- Discussions autour de l'incident "Sous-station Limete inondée" (ID 51 en base)
-('Est-ce que les voitures légères peuvent passer actuellement ?', 1, 51),
-('Non, le boulevard est complètement bloqué, les moteurs se noient. Prenez ByPass.', 2, 51),
-('La pluie de ce matin a vraiment fait d\'énormes dégâts ici...', 3, 51),
-('Quelqu\'un sait si les agents de la mairie sont déjà sur place ?', 4, 51),
-('Toujours rien, la situation est critique à l\'Échangeur.', 5, 51),
-('Attention, une parcelle vient de s\'écrouler à cause du ravin !', 4, 51),
-('Il faut couper l\'eau rapidement dans la zone pour limiter les dégâts.', 3, 51),
-('C\'est une situation qui dure depuis des mois sans intervention sérieuse.', 2, 51),
-('Les autorités communales ont promis de passer cet après-midi.', 1, 51),
-('Prions qu\'il ne pleuve pas ce soir, sinon le quartier sera coupé en deux.', 1, 51);
+-- Discussions autour de l'incident "Sous-station Limete inondée" (ID 3)
+('Est-ce que les voitures légères peuvent passer actuellement ?', 1, 3),
+('Non, le boulevard est complètement bloqué, les moteurs se noient. Prenez ByPass.', 2, 3),
+('La pluie de ce matin a vraiment fait d\'énormes dégâts ici...', 3, 3),
+('Quelqu\'un sait si les agents de la mairie sont déjà sur place ?', 4, 3),
+('Toujours rien, la situation est critique à l\'Échangeur.', 5, 3),
+
+-- Commentaire réaffecté à "Ravin menaçant à Binza" (ID 4)
+('Attention, une parcelle vient de s\'écrouler à cause du ravin !', 4, 4),
+
+-- Commentaire réaffecté à "Fuite d\'eau Regideso" (ID 8)
+('Il faut couper l\'eau rapidement dans la zone pour limiter les dégâts.', 3, 8),
+
+-- Suite des discussions sur Limete inondée (ID 3)
+('C\'est une situation qui dure depuis des mois sans intervention sérieuse.', 2, 3),
+('Les autorités communales ont promis de passer cet après-midi.', 1, 3),
+('Prions qu\'il ne pleuve pas ce soir, sinon le quartier sera coupé en deux.', 1, 3);
