@@ -1,7 +1,14 @@
 #!/bin/sh
 
+echo "🚀 Running migrations & seeders..."
 php artisan migrate --force --seed
+
+echo "⚡ Caching config..."
 php artisan config:cache
+
+echo "⚡ Caching routes..."
 php artisan route:cache
 
-php artisan serve --host=0.0.0.0 --port=8000
+echo "✅ Starting PHP-FPM..."
+
+exec php-fpm

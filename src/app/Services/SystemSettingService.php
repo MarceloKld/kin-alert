@@ -16,11 +16,15 @@ class SystemSettingService
      */
     public function get(string $key, $default = null)
     {
+        try {
         return Cache::remember("system_setting_{$key}", 60, function () use ($key, $default) {
             $setting = SystemSetting::where('key', $key)->first();
-
             return $setting ? $setting->value : $default;
         });
+    } catch (\Throwable $e) {
+        return $default;
+    }
+    
     }
 
     /**
