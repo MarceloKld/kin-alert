@@ -9,6 +9,5 @@ php artisan config:cache
 echo "⚡ Caching routes..."
 php artisan route:cache
 
-echo "✅ Starting PHP-FPM..."
-
-exec php-fpm
+echo "✅ Starting server..."
+php artisan serve --host=0.0.0.0 --port=8000
