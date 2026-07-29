@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
+//cowma
 class AuditLog extends Model
 {
     protected $table = 'audit_logs';
