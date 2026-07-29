@@ -40,7 +40,7 @@ class Incident extends Model
         return $this->belongsTo(Commune::class, 'commune_id');
     }
 
-    public function typeIncident()
+    public function type()
     {
         return $this->belongsTo(TypeIncident::class, 'type_incident_id');
     }
