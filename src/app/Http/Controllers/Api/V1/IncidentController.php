@@ -36,7 +36,7 @@ class IncidentController extends Controller
 
     return Cache::remember($cacheKey, 60, function () use ($filter) {
 
-        $query = Incident::with(['utilisateur', 'commune', 'type', 'preuves'])
+        $query = Incident::with(['utilisateur', 'commune', 'typeIncident', 'preuves'])
             ->latest('date_creation');
 
         $query = $filter->apply($query);
@@ -63,7 +63,7 @@ public function store(StoreIncidentRequest $request, IncidentService $service)
         auth()->id()
     );
     // ✅ IMPORTANT : recharger relations
-    $incident->load(['utilisateur', 'commune', 'type', 'preuves']);
+    $incident->load(['utilisateur', 'commune', 'typeIncident', 'preuves']);
 
    return response()->json([
         'message' => 'Incident créé avec succès',
@@ -78,7 +78,7 @@ public function store(StoreIncidentRequest $request, IncidentService $service)
 {
     $this->authorize('view', $incident);
 
-    $incident->load(['utilisateur', 'commune', 'type']);
+    $incident->load(['utilisateur', 'commune', 'typeIncident']);
 
     return new IncidentResource($incident);
 }
@@ -93,7 +93,7 @@ public function update(UpdateIncidentRequest $request, Incident $incident)
     return response()->json([
     'message' => 'Incident mis à jour',
     'data' => new IncidentResource(
-        $incident->load(['utilisateur', 'commune', 'type'])
+        $incident->load(['utilisateur', 'commune', 'typeIncident'])
     )
 ]);
 }
@@ -117,7 +117,7 @@ public function confirm(Incident $incident, ConfirmationService $service)
     return response()->json([
         'message' => 'Confirmation enregistrée',
         'data' => new IncidentResource(
-            $incident->load(['utilisateur', 'commune', 'type'])
+            $incident->load(['utilisateur', 'commune', 'typeIncident'])
         )
     ]);
 }
@@ -157,7 +157,7 @@ public function myIncidents(IncidentFilter $filter)
 {
     $userId = auth()->id();
 
-    $query = Incident::with(['commune', 'type', 'preuves'])
+    $query = Incident::with(['commune', 'typeIncident', 'preuves'])
         ->where('utilisateur_id', $userId)
         ->latest('date_creation');
 
