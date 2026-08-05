@@ -7,6 +7,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Incident;
 
 class Utilisateur extends Authenticatable
 {
@@ -63,6 +64,12 @@ class Utilisateur extends Authenticatable
 public function isGestionnaire(): bool
 {
     return $this->role === 'gestionnaire';
+}
+
+public function commentaires()
+{
+    // C'est cette fonction qui manquait !
+    return $this->hasMany(Commentaire::class, 'utilisateur_id');
 }
 
 }

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Utilisateur;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Services\AuditService;
+use App\Models\AuditLog;
 
 class UserAdminController extends Controller
 {
@@ -93,5 +94,70 @@ public function deleteManager(Utilisateur $user)
         'message' => 'Gestionnaire supprimé avec succès'
     ]);
 }
+
+//Création des nouveaux Endpoints Admin
+public function details($id)
+    {
+        // 1. Sécurité : On vérifie si c'est un admin (via ta Policy)
+        $this->authorize('adminOnly', Utilisateur::class);
+
+        // 2. Récupération avec statistiques
+        $user = Utilisateur::withCount(['incidents', 'confirmations', 'commentaires'])
+            ->findOrFail($id);
+
+        // 3. Récupération des logs récents
+        $auditLogs = AuditLog::where('utilisateur_id', $id)
+    ->latest('date_creation') // <--- On ajoute 'date_creation' ici
+    ->take(10)
+    ->get();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'user' => $user,
+                'stats' => [
+                    'incidents' => $user->incidents_count,
+                    'confirmations' => $user->confirmations_count,
+                    'commentaires' => $user->commentaires_count,
+                ],
+                'recent_activity' => $auditLogs
+            ]
+        ]);
+    }
+
+//Historique modération gestionnaire
+public function managerActivity($id)
+{
+    // 1. Sécurité : Seul l'admin peut voir l'activité d'un gestionnaire
+    $this->authorize('adminOnly', Utilisateur::class);
+
+    // 2. On récupère le gestionnaire (on vérifie qu'il existe et qu'il est bien gestionnaire ou admin)
+    $manager = Utilisateur::whereIn('role', ['gestionnaire', 'administrateur'])->findOrFail($id);
+
+    // 3. On récupère ses actions de modération
+    $actions = \App\Models\HistoriqueStatut::where('modifie_par', $id)
+        ->with('incident:id,titre') // Charge l'incident lié
+        ->latest('date_modification') // Utilise ta colonne personnalisée
+        ->paginate(15);
+
+    // 4. On calcule ses stats
+    $stats = [
+        'total_actions' => \App\Models\HistoriqueStatut::where('modifie_par', $id)->count(),
+        'validations' => \App\Models\HistoriqueStatut::where('modifie_par', $id)->where('nouveau_statut', 'valide')->count(),
+        'rejets' => \App\Models\HistoriqueStatut::where('modifie_par', $id)->where('nouveau_statut', 'rejete')->count(),
+    ];
+
+    return response()->json([
+        'status' => 'success',
+        'manager' => [
+            'id' => $manager->id,
+            'nom' => $manager->nom,
+            'role' => $manager->role
+        ],
+        'statistics' => $stats,
+        'activities' => $actions
+    ]);
+}
+
 
 }

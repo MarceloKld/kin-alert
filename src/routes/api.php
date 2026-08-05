@@ -19,6 +19,7 @@ use App\Http\Controllers\Api\V1\Admin\AuditAdminController;
 use App\Http\Controllers\Api\V1\Admin\StatisticsAdminController;
 use App\Http\Controllers\Api\V1\Admin\NotificationAdminController;
 use App\Http\Controllers\Api\V1\Admin\AdminDashboardController;
+use App\Http\Controllers\Api\V1\Admin\SystemSettingController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -64,12 +65,13 @@ Route::prefix('v1')->group(function () {
     ->group(function () {
        
             // USERS
+            Route::get('users/{id}/details', [UserAdminController::class, 'details']); // <--- NOUVELLE (EN PREMIER)
             Route::get('users', [UserAdminController::class, 'index']);
             Route::get('users/{user}', [UserAdminController::class, 'show']);
             Route::patch('users/{user}/suspend', [UserAdminController::class, 'suspend']);
             Route::patch('users/{user}/activate', [UserAdminController::class, 'activate']);
             Route::delete('users/{user}', [UserAdminController::class, 'destroy']);
-
+          
             // MANAGERS
             //✅ Maintenant seul administrateur peut créer / supprimer gestionnaire.
            Route::middleware('can:adminOnly,App\Models\Utilisateur')->group(function () {
@@ -78,6 +80,11 @@ Route::prefix('v1')->group(function () {
              Route::get('managers', [UserAdminController::class, 'listManagers']);
              Route::delete('managers/{user}', [UserAdminController::class, 'deleteManager']);
         });
+            Route::get('managers/{id}/activity', [UserAdminController::class, 'managerActivity']);
+            Route::get('incidents/{id}/history', [IncidentAdminController::class, 'history']);
+            Route::get('settings', [SystemSettingController::class, 'index']);
+            Route::put('settings', [SystemSettingController::class, 'update']);
+
 
             // INCIDENTS
             Route::patch('incidents/{incident}/force-status', [IncidentAdminController::class, 'forceStatus']);
@@ -109,6 +116,23 @@ Route::prefix('v1')->group(function () {
 
             //NOTIFICATION CIBLÉE SÉCURISÉE
             Route::post('notifications/send', [NotificationAdminController::class, 'sendToUsers']);
+
+            // Dans le groupe Admin...
+Route::group(['prefix' => 'admin', 'middleware' => ['auth:sanctum']], function () {
+
+    // 1. Détails utilisateur
+    Route::get('users/{id}/details', [UserAdminController::class, 'details']);
+
+    // 2. Activité Manager
+    Route::get('managers/{id}/activity', [UserAdminController::class, 'managerActivity']);
+
+    // 3. Settings
+    Route::get('settings', [SystemSettingController::class, 'index']);
+    Route::put('settings', [SystemSettingController::class, 'update']);
+
+    // 4. Historique Incident spécifique
+    Route::get('incidents/{id}/history', [IncidentAdminController::class, 'history']);
+});
 
         });
 

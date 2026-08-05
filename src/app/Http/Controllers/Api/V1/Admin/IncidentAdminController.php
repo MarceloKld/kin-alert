@@ -207,4 +207,31 @@ public function restore($id)
     ], 200);
 }
 
+//Logs d'historique d'un incident
+public function history($id)
+{
+    // 1. Sécurité : Vérifier si l'utilisateur est Admin ou Gestionnaire
+    $this->authorize('accessAdmin', \App\Models\Utilisateur::class);
+
+    // 2. Vérifier si l'incident existe (renvoie 404 si non trouvé)
+    $incident = \App\Models\Incident::findOrFail($id);
+
+    // 3. Récupérer l'historique avec les infos du modificateur
+    // On utilise 'modificateur' car c'est le nom dans ton modèle HistoriqueStatut.php
+    $history = \App\Models\HistoriqueStatut::where('incident_id', $id)
+        ->with('modificateur:id,nom,role') 
+        ->latest('date_modification') // Ta colonne personnalisée
+        ->get();
+
+    return response()->json([
+        'status' => 'success',
+        'incident' => [
+            'id' => $incident->id,
+            'titre' => $incident->titre,
+            'statut_actuel' => $incident->statut
+        ],
+        'history' => $history
+    ]);
+}
+
 }
