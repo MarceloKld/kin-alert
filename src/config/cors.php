@@ -17,6 +17,7 @@ return [
         'https://kin-alert-mobile.vercel.app',
         'http://localhost:3000', 
         'http://192.168.1.91:3000', 
+        'https://kin-alert-admin.vercel.app',
     ],
 
     'allowed_origins_patterns' => [],
