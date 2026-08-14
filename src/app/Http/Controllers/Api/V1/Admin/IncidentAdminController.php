@@ -71,7 +71,7 @@ public function index(Request $request)
 
     $query = Incident::query()
         ->withTrashed()
-        ->with(['utilisateur', 'commune', 'typeIncident']);
+        ->with(['utilisateur', 'commune', 'typeIncident', 'preuves']);
 
     // ✅ FILTRES
 

@@ -7,7 +7,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class AdminIncidentResource extends JsonResource
 {
-public function toArray(Request $request): array
+    public function toArray(Request $request): array
     {
         return [
             'id' => $this->id,
@@ -33,9 +33,19 @@ public function toArray(Request $request): array
             ],
 
             'type_incident' => [
-    'id' => $this->typeIncident?->id,
-    'titre' => $this->typeIncident?->titre,
-],
+                'id' => $this->typeIncident?->id,
+                'titre' => $this->typeIncident?->titre,
+            ],
+
+            // 📷 AJOUT DES PREUVES (Adapté à ton style)
+            'preuves' => $this->preuves?->map(function ($preuve) {
+                return [
+                    'id' => $preuve->id,
+                    'fichier' => $preuve->fichier,
+                    'type_fichier' => $preuve->type_fichier,
+                    'url' => $preuve->fichier ? asset('storage/' . $preuve->fichier) : null,
+                ];
+            }) ?? [],
         ];
     }
 }
