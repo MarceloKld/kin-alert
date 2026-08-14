@@ -38,6 +38,13 @@ class AuthController extends Controller
             ], 401);
         }
 
+        // --- SÉCURITÉ : Vérification du statut du compte ---
+    if ($user->statut === 'suspendu') {
+        return response()->json([
+            'message' => "Votre compte est suspendu. Veuillez contacter l'administration."
+        ], 403);
+    }
+
         // Génération token
         $token = $user->createToken('api-token')->plainTextToken;
 

@@ -19,11 +19,16 @@ class UserAdminController extends Controller
 
 public function suspend(Utilisateur $user)
 {
+    // 1. Mise à jour du statut
     $user->update(['statut' => 'suspendu']);
 
+    // 2. Révocation immédiate de tous ses tokens (déconnexion forcée)
+    $user->tokens()->delete();
+
+    // 3. Log de l'audit
     app(AuditService::class)->log('suspend_user', 'user', $user->id);
 
-    return response()->json(['message' => 'Utilisateur suspendu']);
+    return response()->json(['message' => 'Utilisateur suspendu et déconnecté avec succès']);
 }
 
 public function activate(Utilisateur $user)
