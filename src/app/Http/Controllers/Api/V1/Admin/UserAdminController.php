@@ -18,7 +18,6 @@ class UserAdminController extends Controller
 
     $query = Utilisateur::query();
 
-    // Filtre sur le nom, l'email ou le téléphone si une recherche est envoyée
     $query->when($search, function ($q) use ($search) {
         $q->where(function ($sub) use ($search) {
             $sub->where('nom', 'like', "%{$search}%")
@@ -27,8 +26,8 @@ class UserAdminController extends Controller
         });
     });
 
-    // Trie du plus récent au plus ancien et pagine par 20 résultats
-    return $query->latest()->paginate(20);
+    // 👈 Passer 'date_creation' à latest() au lieu du 'created_at' par défaut
+    return $query->latest('date_creation')->paginate(20);
 }
 
 public function suspend(Utilisateur $user)
