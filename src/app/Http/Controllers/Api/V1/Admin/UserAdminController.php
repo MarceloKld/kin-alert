@@ -12,9 +12,23 @@ use App\Models\AuditLog;
 class UserAdminController extends Controller
 {
     use AuthorizesRequests;
-    public function index()
+   public function index(Request $request)
 {
-    return Utilisateur::get(); // pagination supprimée
+    $search = $request->query('search');
+
+    $query = Utilisateur::query();
+
+    // Filtre sur le nom, l'email ou le téléphone si une recherche est envoyée
+    $query->when($search, function ($q) use ($search) {
+        $q->where(function ($sub) use ($search) {
+            $sub->where('nom', 'like', "%{$search}%")
+                ->orWhere('email', 'like', "%{$search}%")
+                ->orWhere('telephone', 'like', "%{$search}%");
+        });
+    });
+
+    // Trie du plus récent au plus ancien et pagine par 20 résultats
+    return $query->latest()->paginate(20);
 }
 
 public function suspend(Utilisateur $user)
