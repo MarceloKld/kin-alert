@@ -137,7 +137,7 @@ public function show($id)
 //SUPPRIMER
 public function destroy($id)
 {
-    $this->authorize('accessAdmin', \App\Models\Utilisateur::class);
+   $this->authorize('adminOnly', \App\Models\Utilisateur::class);
 
     $incident = Incident::findOrFail($id);
 
@@ -175,7 +175,7 @@ public function destroy($id)
 //RESTAURER
 public function restore($id)
 {
-    $this->authorize('accessAdmin', \App\Models\Utilisateur::class);
+   $this->authorize('adminOnly', \App\Models\Utilisateur::class);
 
     $incident = Incident::withTrashed()->findOrFail($id);
 
