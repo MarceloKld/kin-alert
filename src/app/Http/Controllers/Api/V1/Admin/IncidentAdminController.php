@@ -19,7 +19,8 @@ class IncidentAdminController extends Controller
     use AuthorizesRequests;
   public function forceStatus(Request $request, Incident $incident)
 {
-    $this->authorize('adminOnly', \App\Models\Utilisateur::class);
+   // Dans IncidentAdminController.php (ligne 22)
+$this->authorize('accessAdmin', \App\Models\Utilisateur::class);
 
     $request->validate([
         'status' => 'required|in:valide,rejete,en_attente'
