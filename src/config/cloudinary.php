@@ -1,32 +1,14 @@
 <?php
 
 return [
+    'cloud_url' => env('cloudinary://375714451437862:-ME7G_mzy5MxBGgDcHlm6rQClWA@jjmpouzm'),
 
-    /*
-    |--------------------------------------------------------------------------
-    | Cloudinary Configuration
-    |--------------------------------------------------------------------------
-    */
-
-    'notification_url' => env('CLOUDINARY_NOTIFICATION_URL'),
-
-    'cloud_url' => env('CLOUDINARY_URL', 'cloudinary://'.env('CLOUDINARY_KEY').':'.env('CLOUDINARY_SECRET').'@'.env('CLOUDINARY_CLOUD_NAME')),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Cloud Details (Ajouté pour éviter l'erreur de clé manquante)
-    |--------------------------------------------------------------------------
-    */
+    'upload_preset' => env('kin_alert_preset'),
+    
+    // Si le package demande spécifiquement "cloud", vérifie qu'il y a bien cette structure :
     'cloud' => [
-        'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
-        'api_key'    => env('CLOUDINARY_API_KEY'),
-        'api_secret' => env('CLOUDINARY_API_SECRET'),
+        'cloud_name' => env('jjmpouzm'),
+        'api_key'    => env('375714451437862'),
+        'api_secret' => env('-ME7G_mzy5MxBGgDcHlm6rQClWA'),
     ],
-
-    'upload_preset' => env('CLOUDINARY_UPLOAD_PRESET'),
-
-    'upload_route' => env('CLOUDINARY_UPLOAD_ROUTE'),
-
-    'upload_action' => env('CLOUDINARY_UPLOAD_ACTION'),
-
 ];
