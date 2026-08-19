@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Incident;
 use App\Models\HistoriqueStatut;
 use Illuminate\Support\Facades\DB;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class IncidentService
 {
@@ -38,18 +39,28 @@ class IncidentService
 
         // 3. Gestion de la photo
         if (request()->hasFile('photo')) {
+            foreach (request()->file('photo') as $photo) {
+                
+                // On prépare la variable
+                $path = '';
 
-    foreach (request()->file('photo') as $photo) {
+                // On vérifie l'environnement
+                if (config('filesystems.default') === 'cloudinary') {
+                    // EN PRODUCTION (Render) : Upload sur Cloudinary
+                    $path = $photo->storeOnCloudinary('preuves')->getSecurePath();
+                } else {
+                    // EN LOCAL (Ton PC) : Ton ancien code qui marche déjà
+                    $path = $photo->store('preuves', 'public');
+                }
 
-        $path = $photo->store('preuves', 'public');
-
-        Preuve::create([
-            'incident_id' => $incident->id,
-            'fichier' => $path,
-            'type_fichier' => $photo->getClientOriginalExtension()
-        ]);
-    }
-}
+                // Enregistrement en base de données (Inchangé)
+                Preuve::create([
+                    'incident_id' => $incident->id,
+                    'fichier' => $path,
+                    'type_fichier' => $photo->getClientOriginalExtension()
+                ]);
+            }
+        }
 
         // 4. Retourne l'incident mis à jour avec ses relations
         return $incident->fresh()->load(['preuves']);
