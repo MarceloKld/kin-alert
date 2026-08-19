@@ -11,4 +11,9 @@ return [
         'api_key'    => env('375714451437862'),
         'api_secret' => env('-ME7G_mzy5MxBGgDcHlm6rQClWA'),
     ],
+
+    'baseUrl' => env('cloudinary://375714451437862:-ME7G_mzy5MxBGgDcHlm6rQClWA@jjmpouzm'),
+
+    'upload_preset' => env('kin_alert_preset'),
+
 ];
