@@ -45,13 +45,8 @@ class IncidentService
                 $path = '';
 
                 // On vérifie l'environnement
-                if (config('filesystems.default') === 'cloudinary') {
-                    // EN PRODUCTION (Render) : Upload sur Cloudinary
-                    $path = $photo->storeOnCloudinary('preuves')->getSecurePath();
-                } else {
-                    // EN LOCAL (Ton PC) : Ton ancien code qui marche déjà
-                    $path = $photo->store('preuves', 'public');
-                }
+               // On utilise le système de stockage natif de Laravel avec le disque spécifié dans .env
+$path = $photo->store('preuves', config('filesystems.default'));
 
                 // Enregistrement en base de données (Inchangé)
                 Preuve::create([
