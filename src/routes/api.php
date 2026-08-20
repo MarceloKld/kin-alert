@@ -193,7 +193,13 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:sanctum']], function (
 
     
 
-   
+   Route::get('/debug-cloudinary', function () {
+    return response()->json([
+        'config_cloudinary' => config('cloudinary'),
+        'env_cloud_name'    => env('CLOUDINARY_CLOUD_NAME'),
+        'env_url'           => env('CLOUDINARY_URL'),
+    ]);
+});
 
 
 

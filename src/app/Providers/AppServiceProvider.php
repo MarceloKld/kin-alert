@@ -17,17 +17,16 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
-    {
-        // Debug radical pour Cloudinary sur Render
-    if (app()->environment('production')) {
-        config([
-            'cloudinary.cloud' => [
-                'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
-                'api_key'    => env('CLOUDINARY_API_KEY'),
-                'api_secret' => env('CLOUDINARY_API_SECRET'),
-            ]
-        ]);
-    }
-    }
+   public function boot(): void
+{
+    // On force la configuration Cloudinary au runtime
+    config([
+        'cloudinary.cloud' => [
+            'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
+            'api_key'    => env('CLOUDINARY_API_KEY'),
+            'api_secret' => env('CLOUDINARY_API_SECRET'),
+        ],
+        'cloudinary.upload_preset' => env('CLOUDINARY_UPLOAD_PRESET'),
+    ]);
+}
 }
