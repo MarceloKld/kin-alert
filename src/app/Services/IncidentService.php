@@ -44,6 +44,11 @@ class IncidentService
                 // On prépare la variable
                 $path = '';
 
+                // Test temporaire avant le store
+                if (!config()->has('cloudinary.cloud')) {
+                    throw new \Exception("La config Cloudinary est absente au moment de l'upload !");
+                }
+
                 // On vérifie l'environnement
                // On utilise le système de stockage natif de Laravel avec le disque spécifié dans .env
 $path = $photo->store('preuves', config('filesystems.default'));
