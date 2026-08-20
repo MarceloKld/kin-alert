@@ -7,7 +7,9 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Incident;
 use App\Models\HistoriqueStatut;
 use Illuminate\Support\Facades\DB;
-use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class IncidentService
 {
@@ -37,29 +39,36 @@ class IncidentService
             'modifie_par' => $userId
         ]);
 
-        // 3. Gestion de la photo
+        // 3. Gestion de la photo via API HTTP Cloudinary (infaillible)
         if (request()->hasFile('photo')) {
+            $cloudName = env('CLOUDINARY_CLOUD_NAME');
+            $preset = env('CLOUDINARY_UPLOAD_PRESET');
+            $endpoint = "https://api.cloudinary.com/v1_1/{$cloudName}/image/upload";
+
             foreach (request()->file('photo') as $photo) {
-                
-                // On prépare la variable
-                $path = '';
-
-                // Test temporaire avant le store
-                if (!config()->has('cloudinary.cloud')) {
-                    throw new \Exception("La config Cloudinary est absente au moment de l'upload !");
-                }
-
-                // On vérifie l'environnement
-               // On utilise le système de stockage natif de Laravel avec le disque spécifié dans .env
-                // Envoie directement l'image sur le disque Cloudinary
-                 $path = $photo->store('preuves', 'cloudinary');
-
-                // Enregistrement en base de données (Inchangé)
-                Preuve::create([
-                    'incident_id' => $incident->id,
-                    'fichier' => $path,
-                    'type_fichier' => $photo->getClientOriginalExtension()
+                // Envoi direct du fichier à Cloudinary
+                $response = Http::attach(
+                    'file',
+                    file_get_contents($photo->getRealPath()),
+                    $photo->getClientOriginalName()
+                )->post($endpoint, [
+                    'upload_preset' => $preset,
                 ]);
+
+                if ($response->successful()) {
+                    $cloudinaryData = $response->json();
+                    $path = $cloudinaryData['secure_url']; // URL publique https d'accès à l'image
+
+                    // Enregistrement en base de données
+                    Preuve::create([
+                        'incident_id' => $incident->id,
+                        'fichier' => $path,
+                        'type_fichier' => $photo->getClientOriginalExtension()
+                    ]);
+                } else {
+                    Log::error("Erreur Cloudinary : " . $response->body());
+                    throw new \Exception("Échec de l'upload vers Cloudinary");
+                }
             }
         }
 

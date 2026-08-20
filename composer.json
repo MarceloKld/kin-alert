@@ -1,5 +1,2 @@
 {
-    "require": {
-        "cloudinary-labs/cloudinary-laravel": "^3.0"
-    }
 }
