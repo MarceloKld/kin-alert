@@ -51,7 +51,8 @@ class IncidentService
 
                 // On vérifie l'environnement
                // On utilise le système de stockage natif de Laravel avec le disque spécifié dans .env
-$path = $photo->store('preuves', config('filesystems.default'));
+                // Envoie directement l'image sur le disque Cloudinary
+                 $path = $photo->store('preuves', 'cloudinary');
 
                 // Enregistrement en base de données (Inchangé)
                 Preuve::create([
