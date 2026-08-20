@@ -10,4 +10,9 @@ return [
     ],
 
     'upload_preset' => env('CLOUDINARY_UPLOAD_PRESET'),
+
+    // Ajoute ces clés par défaut pour éviter que le package ne plante
+    'notification_url' => null,
+    'upload_route'     => null,
+    'upload_action'    => null,
 ];
