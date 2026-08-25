@@ -141,9 +141,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:sanctum']], function (
         Route::apiResource('villes', VilleController::class)
         ->only(['index', 'store']);
 
-    //✅ 2️⃣ COMMUNES
-        Route::apiResource('communes', CommuneController::class)
-        ->only(['indx', 'store']);
+    //// Ou déclaration explicite si apiResource pose un souci :
+Route::get('communes', [CommuneController::class, 'index']);
+Route::post('communes', [CommuneController::class, 'store']);
 
     //✅ 3️⃣ TYPES INCIDENTS
          Route::apiResource('types-incidents', TypeIncidentController::class)
@@ -183,8 +183,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:sanctum']], function (
     Route::get('my-dashboard',
     [StatisticsController::class, 'myDashboard']);
 
-    //VOIR LES COMMUNES
-    Route::get('communes', [CommuneController::class, 'index']);
+
     
     });
 
