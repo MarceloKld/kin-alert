@@ -11,9 +11,10 @@ use App\Models\Utilisateur;
 class AuditAdminController extends Controller
 {
     use AuthorizesRequests;
-   public function index(Request $request)
+
+    public function index(Request $request)
 {
-    $query = AuditLog::query();
+    $query = AuditLog::with('utilisateur:id,nom,role');
 
     if ($request->user_id) {
         $query->where('utilisateur_id', $request->user_id);
@@ -27,21 +28,24 @@ class AuditAdminController extends Controller
         $query->whereDate('date_creation', $request->date);
     }
 
-    // Utilisation explicite de 'date_creation' au lieu du 'created_at' par défaut
-        return response()->json($query->latest('date_creation')->get());
+    // Récupère la limite par page passée dans l'URL (ex: ?per_page=15) ou 15 par défaut
+    $perPage = min((int) $request->get('per_page', 15), 100);
+
+    // Pagination automatique au lieu de ->get()
+    return response()->json($query->latest('date_creation')->paginate($perPage));
 }
+    // AUDIT LOGS PAR UTILISATEUR
+    public function logsByUser($id, Request $request)
+    {
+        $this->authorize('accessAdmin', Utilisateur::class);
 
-//AUDIT LOGS PAR UTILISATEUR
-public function logsByUser($id, Request $request)
-{
-    $this->authorize('accessAdmin', Utilisateur::class);
+        $perPage = min($request->get('per_page', 20), 100);
 
-    $perPage = min($request->get('per_page', 20), 100);
+        $logs = AuditLog::with('utilisateur:id,nom,role')
+            ->where('utilisateur_id', $id)
+            ->orderByDesc('date_creation')
+            ->paginate($perPage);
 
-    $logs = AuditLog::where('utilisateur_id', $id)
-        ->orderByDesc('date_creation')
-        ->paginate($perPage);
-
-    return response()->json($logs);
-}
+        return response()->json($logs);
+    }
 }
