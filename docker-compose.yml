@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
 
   app:
@@ -44,10 +42,13 @@ services:
       - kin_alert_network
 
   redis:
-   image: redis:alpine
-   container_name: kin_alert_redis
-   ports:
-    - "6379:6379"
+    image: redis:alpine
+    container_name: kin_alert_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - kin_alert_network
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
